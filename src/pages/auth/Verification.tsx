@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,12 +22,14 @@ const Verification = () => {
       setIsActivating(true);
       
       try {
+        console.log("Processing auth with location:", location.pathname, "hash length:", location.hash.length);
+        
         // Extract tokens from URL hash (Supabase can use hash-based auth in some flows)
         const hashParams = new URLSearchParams(location.hash.replace('#', ''));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         const type = hashParams.get('type') || searchParams.get('type');
-        const token = searchParams.get('token');
+        const token = searchParams.get('token') || hashParams.get('token');
         const error = hashParams.get('error') || searchParams.get('error');
         
         console.log("Auth detection:", { 
@@ -60,15 +61,14 @@ const Verification = () => {
         }
         
         // Handle standard email verification link
-        if ((type === 'email_confirmation' || type === 'signup') && token) {
+        if ((type === 'email_confirmation' || type === 'signup' || type === 'recovery') && token) {
           await handleEmailVerification(token);
           return;
         }
         
         // If we have a hash but couldn't extract tokens, try to process it as a direct auth response
-        if (location.hash.length > 1 && location.hash.includes('access_token')) {
-          const currentHash = location.hash.substring(1);
-          console.log("Attempting to process hash directly:", currentHash.substring(0, 20) + "...");
+        if (location.hash.length > 1) {
+          console.log("Attempting to process hash directly");
           
           // Try to extract the session from the URL
           const { data, error } = await supabase.auth.getSession();
@@ -91,6 +91,10 @@ const Verification = () => {
             console.error("Hash processing error:", error);
           }
         }
+        
+        // If we got here, we couldn't process the auth automatically
+        console.log("Could not automatically process auth, showing manual activation button");
+        setIsActivating(false);
       } catch (error) {
         console.error('Auth processing error:', error);
         setVerificationStatus('error');
@@ -99,7 +103,6 @@ const Verification = () => {
           description: "There was a problem with the authentication process.",
           variant: "destructive",
         });
-      } finally {
         setIsActivating(false);
       }
     };
@@ -175,6 +178,15 @@ const Verification = () => {
         verifyResult = await supabase.auth.verifyOtp({
           token_hash: token,
           type: 'email_change'
+        });
+      }
+      
+      // If that fails, try with recovery type
+      if (verifyResult.error) {
+        console.log('Second verification attempt failed, trying recovery type');
+        verifyResult = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: 'recovery'
         });
       }
 

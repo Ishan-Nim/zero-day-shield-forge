@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -161,6 +162,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       console.log("Signing up with", email);
+      
+      // Get the current site URL from window.location.origin
+      // This will use the correct domain in both development and production
+      const siteUrl = window.location.origin;
+      console.log("Using site URL:", siteUrl);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -168,7 +175,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             full_name: fullName,
           },
-          emailRedirectTo: window.location.origin + '/auth/verification',
+          // Use the current site URL to build the redirect URL
+          emailRedirectTo: `${siteUrl}/auth/verification`,
         },
       });
 
@@ -203,8 +211,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     try {
+      // Get the current site URL dynamically
+      const siteUrl = window.location.origin;
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/auth/update-password',
+        redirectTo: `${siteUrl}/auth/update-password`,
       });
 
       if (error) {
