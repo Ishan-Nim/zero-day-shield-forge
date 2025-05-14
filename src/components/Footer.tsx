@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -74,13 +75,13 @@ const Footer: React.FC = () => {
                 <a href="#about" className="text-gray-400 hover:text-cyber-secondary transition-colors">About Us</a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Terms & Conditions</a>
+                <Link to="/terms" className="text-gray-400 hover:text-cyber-secondary transition-colors">Terms & Conditions</Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Privacy Policy</a>
+                <Link to="/privacy" className="text-gray-400 hover:text-cyber-secondary transition-colors">Privacy Policy</Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Refund Policy</a>
+                <Link to="/refund" className="text-gray-400 hover:text-cyber-secondary transition-colors">Refund Policy</Link>
               </li>
               <li>
                 <a href="#contact" className="text-gray-400 hover:text-cyber-secondary transition-colors">Contact Us</a>
@@ -112,9 +113,9 @@ const Footer: React.FC = () => {
               © {new Date().getFullYear()} Zeroday (Pvt) Ltd. All rights reserved.
             </div>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Terms</a>
-              <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Privacy</a>
-              <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Cookies</a>
+              <Link to="/terms" className="text-gray-400 hover:text-cyber-secondary transition-colors">Terms</Link>
+              <Link to="/privacy" className="text-gray-400 hover:text-cyber-secondary transition-colors">Privacy</Link>
+              <Link to="/refund" className="text-gray-400 hover:text-cyber-secondary transition-colors">Refund</Link>
             </div>
           </div>
         </div>
