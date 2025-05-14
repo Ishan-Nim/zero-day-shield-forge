@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { MapPin, Calendar, FileText, Globe } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from './ui/button';
 
 const About: React.FC = () => {
   return (
@@ -11,7 +13,9 @@ const About: React.FC = () => {
             <div className="relative">
               <div className="w-64 h-64 bg-gradient-to-br from-cyber-primary to-cyber-secondary rounded-full opacity-10 absolute -top-10 -left-10 animate-pulse-slow"></div>
               <div className="cyber-card p-8 relative z-10">
-                <h3 className="text-2xl font-semibold mb-6">From Local Roots to Global Reach</h3>
+                <Link to="/company/local-roots" className="group">
+                  <h3 className="text-2xl font-semibold mb-6 group-hover:text-cyber-primary transition-colors">From Local Roots to Global Reach</h3>
+                </Link>
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
                   What started as a bold idea in Sri Lanka has grown into a trusted cybersecurity force serving clients across Japan, Singapore, and beyond.
                 </p>
@@ -31,6 +35,14 @@ const About: React.FC = () => {
                     <span>Red-team-style pentests for enterprises and startups</span>
                   </li>
                 </ul>
+                
+                <div className="mt-6">
+                  <Link to="/company/local-roots">
+                    <Button variant="outline" className="border-cyber-primary text-cyber-primary hover:bg-cyber-primary/5">
+                      Learn more about our journey
+                    </Button>
+                  </Link>
+                </div>
               </div>
               <div className="absolute -bottom-6 -right-6 h-32 w-32 bg-cyber-accent/10 rounded-full blur-xl"></div>
             </div>

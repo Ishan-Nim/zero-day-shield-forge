@@ -1,26 +1,30 @@
 
 import React from 'react';
 import { ShieldCheck, Zap, Star, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type FeatureCardProps = {
   icon: React.ReactNode;
   emoji: string;
   title: string;
   description: string;
+  url: string;
 };
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, emoji, title, description }) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, emoji, title, description, url }) => {
   return (
-    <div className="cyber-card p-6 border-t-4 border-cyber-primary">
-      <div className="flex items-center mb-4">
-        <div className="mr-4 text-3xl">{emoji}</div>
-        <div className="bg-cyber-primary/10 p-2 rounded-full">
-          {icon}
+    <Link to={url} className="block group">
+      <div className="cyber-card p-6 border-t-4 border-cyber-primary hover:shadow-md transition-shadow h-full">
+        <div className="flex items-center mb-4">
+          <div className="mr-4 text-3xl">{emoji}</div>
+          <div className="bg-cyber-primary/10 p-2 rounded-full">
+            {icon}
+          </div>
         </div>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400">{description}</p>
       </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-400">{description}</p>
-    </div>
+    </Link>
   );
 };
 
@@ -30,25 +34,29 @@ const WhyUs: React.FC = () => {
       icon: <ShieldCheck className="h-6 w-6 text-cyber-primary" />,
       emoji: "🔒",
       title: "Security-First Philosophy",
-      description: "We don't just develop software — we embed security at every stage. Whether you're scaling fast or tightening defenses, Zeroday is built to protect."
+      description: "We don't just develop software — we embed security at every stage. Whether you're scaling fast or tightening defenses, Zeroday is built to protect.",
+      url: "/company/security-first"
     },
     {
       icon: <Zap className="h-6 w-6 text-cyber-primary" />,
       emoji: "⚡",
       title: "Fast, Flexible Payments",
-      description: "Easy, secure, and tailored to your workflow — no delays, no hidden fees."
+      description: "Easy, secure, and tailored to your workflow — no delays, no hidden fees.",
+      url: "/company/flexible-payments"
     },
     {
       icon: <Star className="h-6 w-6 text-cyber-primary" />,
       emoji: "🌟",
       title: "Client-First Support",
-      description: "With a proven track record and glowing feedback, we deliver value, not just code."
+      description: "With a proven track record and glowing feedback, we deliver value, not just code.",
+      url: "/company/client-support"
     },
     {
       icon: <MessageSquare className="h-6 w-6 text-cyber-primary" />,
       emoji: "📡",
       title: "Transparent Communication",
-      description: "From kickoff to delivery, we keep you informed, aligned, and in control."
+      description: "From kickoff to delivery, we keep you informed, aligned, and in control.",
+      url: "/company/transparent-communication"
     }
   ];
   
@@ -97,6 +105,7 @@ const WhyUs: React.FC = () => {
                 emoji={feature.emoji}
                 title={feature.title}
                 description={feature.description}
+                url={feature.url}
               />
             ))}
           </div>
