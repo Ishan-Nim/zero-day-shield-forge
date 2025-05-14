@@ -26,7 +26,9 @@ const Verification = () => {
         console.log("Processing auth with location:", location.pathname, "hash length:", location.hash.length);
         
         // Check if URL contains localhost and log warning
-        if (location.href.includes('localhost')) {
+        // Fix: Use window.location.href instead of location.href
+        const fullUrl = window.location.href;
+        if (fullUrl.includes('localhost')) {
           console.warn("Detected localhost in URL. This may cause issues in production.");
           toast({
             title: "Redirect URL Issue",
