@@ -28,7 +28,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      (_event, newSession) => {
+        console.log("Auth state changed", _event, newSession?.user?.email);
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
@@ -45,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log("Got existing session", currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -59,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log("Fetching user profile for", userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -70,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
+      console.log("Profile data:", data);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -78,37 +82,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("Signing in with", email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        // Handle the email not confirmed error specifically
+        // Even if there's an error, check if it's related to email confirmation
+        // and try to proceed anyway for testing environments
         if (error.message.includes('Email not confirmed')) {
-          // Try to authorize anyway - this is only for testing environments where email confirmation is disabled
+          console.log("Email not confirmed, but proceeding for testing");
           toast({
-            title: 'Notice',
-            description: 'Proceeding without email confirmation.',
+            title: "Notice",
+            description: "Proceeding without email confirmation for testing purposes.",
           });
           navigate('/customer-panel');
           return;
         }
         
         toast({
-          title: 'Sign in failed',
+          title: "Sign in failed",
           description: error.message,
-          variant: 'destructive',
+          variant: "destructive",
         });
         throw error;
       }
 
-      toast({
-        title: 'Sign in successful',
-        description: 'Welcome back!',
-      });
-      
-      navigate('/customer-panel');
+      if (data.session) {
+        console.log("Sign in successful");
+        toast({
+          title: "Sign in successful",
+          description: "Welcome back!",
+        });
+        
+        navigate('/customer-panel');
+      } else {
+        console.log("No session returned after sign in");
+      }
     } catch (error: any) {
       console.error('Sign in error:', error);
     }
@@ -116,6 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      console.log("Signing up with", email);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -128,26 +140,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         toast({
-          title: 'Sign up failed',
+          title: "Sign up failed",
           description: error.message,
-          variant: 'destructive',
+          variant: "destructive",
         });
         throw error;
       }
 
       // For testing environments where email confirmation is disabled
-      if (data.user && !data.session) {
-        // If no session is returned but user exists, try to sign in directly
+      // Try to sign in directly if signup was successful
+      if (data.user) {
+        console.log("User created, attempting to sign in");
+        
+        // Try to sign in directly
         await signIn(email, password);
-        return;
+      } else {
+        console.log("No user returned after sign up");
+        toast({
+          title: "Sign up issue",
+          description: "Account created but could not sign in automatically.",
+        });
       }
-
-      toast({
-        title: 'Sign up successful',
-        description: 'Your account has been created!',
-      });
-      
-      navigate('/customer-panel');
     } catch (error: any) {
       console.error('Sign up error:', error);
     }
@@ -159,16 +172,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) {
         toast({
-          title: 'Sign out failed',
+          title: "Sign out failed",
           description: error.message,
-          variant: 'destructive',
+          variant: "destructive",
         });
         throw error;
       }
       
       toast({
-        title: 'Signed out',
-        description: 'You have been signed out successfully.',
+        title: "Signed out",
+        description: "You have been signed out successfully.",
       });
       
       navigate('/auth/login');
