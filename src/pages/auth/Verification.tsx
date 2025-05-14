@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MailCheck, Loader2 } from 'lucide-react';
@@ -15,17 +15,34 @@ const Verification = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
 
-  // Check if this is a redirect from email verification
+  // Check for hash fragment parameters that might contain tokens
   useEffect(() => {
+    // Function to extract tokens from URL hash
+    const extractHashParams = () => {
+      const hash = location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      return {
+        accessToken: params.get('access_token'),
+        refreshToken: params.get('refresh_token'),
+        type: params.get('type')
+      };
+    };
+
+    // Check both query parameters and hash fragments
     const token = searchParams.get('token');
     const type = searchParams.get('type');
-    
-    if (type === 'email_confirmation' && token) {
-      // This is an email verification link
+    const hashParams = extractHashParams();
+
+    if ((type === 'email_confirmation' || type === 'signup') && token) {
+      // Handle standard email verification link
       handleEmailVerification(token);
+    } else if (hashParams.accessToken && hashParams.refreshToken && hashParams.type === 'signup') {
+      // Handle hash fragment authentication (common in some Supabase redirects)
+      handleHashAuthentication(hashParams.accessToken, hashParams.refreshToken);
     }
-  }, [searchParams]);
+  }, [location.hash, searchParams]);
 
   // Check if user is already authenticated
   useEffect(() => {
@@ -34,20 +51,71 @@ const Verification = () => {
     }
   }, [user, navigate]);
 
-  const handleEmailVerification = async (token: string) => {
+  const handleHashAuthentication = async (accessToken: string, refreshToken: string) => {
     setIsActivating(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({
-        token_hash: token,
-        type: 'email_change' // Updated to use a valid type from OtpType
+      const { data, error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
       });
 
       if (error) {
-        console.error('Email verification error:', error);
+        console.error('Session setup error:', error);
+        setVerificationStatus('error');
+        toast({
+          title: "Authentication failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setVerificationStatus('success');
+        toast({
+          title: "Authentication successful",
+          description: "You have been successfully authenticated.",
+        });
+        
+        // Small delay before redirecting
+        setTimeout(() => {
+          navigate('/customer-panel');
+        }, 1500);
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      setVerificationStatus('error');
+      toast({
+        title: "Authentication error",
+        description: "There was a problem with the authentication process.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
+  const handleEmailVerification = async (token: string) => {
+    setIsActivating(true);
+    try {
+      // Try with signup confirmation type first
+      let verifyResult = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'signup'
+      });
+
+      // If that fails, try with email change type
+      if (verifyResult.error) {
+        console.log('First verification attempt failed, trying alternate type');
+        verifyResult = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: 'email_change'
+        });
+      }
+
+      if (verifyResult.error) {
+        console.error('Email verification error:', verifyResult.error);
         setVerificationStatus('error');
         toast({
           title: "Verification failed",
-          description: error.message,
+          description: verifyResult.error.message,
           variant: "destructive",
         });
       } else {

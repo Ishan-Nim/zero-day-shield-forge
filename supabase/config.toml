@@ -2,7 +2,7 @@
 project_id = "pqalojdhgapnjnzulvas"
 
 [auth]
-# Disable email confirmations for testing
+# Enable email confirmations for proper verification
 enable_email_confirmations = true
 site_url = "https://zeroday.lk"
 additional_redirect_urls = [
@@ -12,5 +12,6 @@ additional_redirect_urls = [
   "https://localhost:5173", 
   "http://localhost:4173", 
   "https://localhost:4173",
-  "https://zeroday.lk"
+  "https://zeroday.lk",
+  "http://zeroday.lk"
 ]
