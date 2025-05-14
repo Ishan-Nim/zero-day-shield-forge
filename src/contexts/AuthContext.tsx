@@ -159,10 +159,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Signing up with", email);
       
-      // Always use the production URL for verification
-      const siteUrl = "https://zeroday.lk";
-      console.log("Using site URL:", siteUrl);
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -170,8 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             full_name: fullName,
           },
-          // Use the site URL to build the redirect URL
-          emailRedirectTo: `${siteUrl}/auth/verification`,
+          emailRedirectTo: `${window.location.origin}/auth/verification`,
         },
       });
 
@@ -206,11 +201,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     try {
-      // Always use the production site URL
-      const siteUrl = "https://zeroday.lk";
-      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${siteUrl}/auth/update-password`,
+        redirectTo: `${window.location.origin}/auth/update-password`,
       });
 
       if (error) {
