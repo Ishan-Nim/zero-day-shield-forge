@@ -3,6 +3,14 @@ project_id = "pqalojdhgapnjnzulvas"
 
 [auth]
 # Disable email confirmations for testing
-enable_email_confirmations = false
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "http://localhost:5173", "https://localhost:5173", "http://localhost:4173", "https://localhost:4173"]
+enable_email_confirmations = true
+site_url = "https://zeroday.lk"
+additional_redirect_urls = [
+  "http://localhost:3000",
+  "https://localhost:3000", 
+  "http://localhost:5173", 
+  "https://localhost:5173", 
+  "http://localhost:4173", 
+  "https://localhost:4173",
+  "https://zeroday.lk"
+]

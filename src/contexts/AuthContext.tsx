@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type AuthContextType = {
   session: Session | null;
@@ -13,6 +13,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -48,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
             setTimeout(() => {
               navigate('/customer-panel');
-            }, 100);
+            }, 500);
           }
         } else {
           setProfile(null);
@@ -71,9 +73,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchUserProfile(currentSession.user.id);
         
         // Redirect to customer panel if already logged in
-        if (window.location.pathname === '/' || 
-            window.location.pathname === '/auth/login' || 
-            window.location.pathname === '/auth/register') {
+        // Only redirect if we're on a public page
+        const publicPages = ['/', '/auth/login', '/auth/register', '/auth/reset-password'];
+        if (publicPages.includes(location.pathname)) {
           navigate('/customer-panel');
         }
       }
@@ -81,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -115,32 +117,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         // Handle email confirmation error specially
         if (error.message.includes('Email not confirmed')) {
-          console.log("Email not confirmed, but proceeding for testing");
           toast({
-            title: "Notice",
-            description: "Proceeding without email confirmation for testing purposes.",
-            duration: 3000,
+            title: "Email not verified",
+            description: "Please check your email and click the verification link to confirm your account.",
+            variant: "destructive",
           });
-          
-          // Try to sign in again to force the session
-          const { data: forceData } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          if (forceData.session) {
-            toast({
-              title: "Sign in successful",
-              description: "Welcome back!",
-              duration: 3000,
-            });
-            navigate('/customer-panel');
-            return;
-          } else {
-            // If still no session, navigate anyway (for testing)
-            navigate('/customer-panel');
-            return;
-          }
+          throw error;
         }
         
         toast({
@@ -159,10 +141,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           duration: 3000,
         });
         
-        // Explicitly navigate to customer panel with a slight delay to ensure state updates
+        // Explicitly navigate to customer panel with a delay to ensure state updates
         setTimeout(() => {
           navigate('/customer-panel');
-        }, 100);
+        }, 500);
       } else {
         console.log("No session returned after sign in");
         toast({
@@ -173,6 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error: any) {
       console.error('Sign in error:', error);
+      throw error;
     }
   };
 
@@ -198,27 +181,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
 
-      // For testing environments where email confirmation is disabled
-      // Try to sign in directly if signup was successful
       if (data.user) {
-        console.log("User created, attempting to sign in");
         toast({
           title: "Account created",
-          description: "Signing you in automatically...",
-          duration: 3000,
+          description: "Please check your email to verify your account.",
+          duration: 5000,
         });
-        
-        // Try to sign in directly
-        await signIn(email, password);
+        navigate('/auth/verification');
       } else {
-        console.log("No user returned after sign up");
         toast({
           title: "Sign up issue",
-          description: "Account created but could not sign in automatically.",
+          description: "Account created but verification email could not be sent.",
+          variant: "destructive",
         });
       }
     } catch (error: any) {
       console.error('Sign up error:', error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://zeroday.lk/auth/update-password',
+      });
+
+      if (error) {
+        toast({
+          title: "Password reset failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      toast({
+        title: "Password reset email sent",
+        description: "Please check your email for password reset instructions.",
+        duration: 5000,
+      });
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      throw error;
     }
   };
 
@@ -254,6 +259,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signUp,
     signOut,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

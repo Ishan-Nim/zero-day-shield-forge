@@ -7,6 +7,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Verification from './pages/auth/Verification';
+import ResetPassword from './pages/auth/ResetPassword';
+import UpdatePassword from './pages/auth/UpdatePassword';
 
 // Main Pages
 import Index from './pages/Index';
@@ -57,6 +59,8 @@ const AppRoutes = () => {
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
       <Route path="/auth/verification" element={<Verification />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/update-password" element={<UpdatePassword />} />
       
       {/* Customer Panel Routes - Protected with authentication */}
       <Route path="/customer-panel" element={

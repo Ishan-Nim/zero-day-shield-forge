@@ -106,6 +106,11 @@ const Login = () => {
                   </FormItem>
                 )}
               />
+              <div className="text-right">
+                <Link to="/auth/reset-password" className="text-sm font-medium text-cyber-primary hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <Button 
                 type="submit" 
                 className="w-full" 
