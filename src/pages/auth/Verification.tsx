@@ -25,16 +25,20 @@ const Verification = () => {
       try {
         console.log("Processing auth with location:", location.pathname, "hash length:", location.hash.length);
         
-        // Check if URL contains localhost and log warning
-        // Fix: Use window.location.href instead of location.href
+        // Check if URL contains localhost and replace it with zeroday.lk
         const fullUrl = window.location.href;
         if (fullUrl.includes('localhost')) {
-          console.warn("Detected localhost in URL. This may cause issues in production.");
-          toast({
-            title: "Redirect URL Issue",
-            description: "Your verification link contains localhost. Please use zeroday.lk instead.",
-            variant: "destructive",
-          });
+          console.warn("Detected localhost in URL. Replacing with zeroday.lk");
+          
+          // Replace all instances of localhost with zeroday.lk
+          const correctedUrl = fullUrl.replace(/http:\/\/localhost:[0-9]+/g, 'https://zeroday.lk');
+          
+          // Redirect to the corrected URL if needed
+          if (correctedUrl !== fullUrl) {
+            console.log("Redirecting to:", correctedUrl);
+            window.location.href = correctedUrl;
+            return;
+          }
         }
         
         // Extract tokens from URL hash (Supabase can use hash-based auth in some flows)
@@ -219,7 +223,7 @@ const Verification = () => {
           description: "Your email has been successfully verified.",
         });
         
-        // Small delay before redirecting to home page instead of customer panel
+        // Small delay before redirecting to home page
         setTimeout(() => {
           navigate('/');
         }, 1500);

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -158,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Signing up with", email);
       
-      // Get the current site URL - use the production URL for verification
+      // Always use the production URL for verification
       const siteUrl = "https://zeroday.lk";
       console.log("Using site URL:", siteUrl);
       
@@ -205,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     try {
-      // Use the production site URL
+      // Always use the production site URL
       const siteUrl = "https://zeroday.lk";
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
