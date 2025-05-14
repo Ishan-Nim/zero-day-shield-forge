@@ -73,43 +73,6 @@ const Hero: React.FC = () => {
               
               {/* Background glow effects for the globe */}
               <div className="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-cyber-primary to-cyber-secondary rounded-full opacity-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse-slow"></div>
-              
-              {/* UI Card overlay positioned over the globe */}
-              <div className="bg-white dark:bg-cyber-dark p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 relative z-20 w-[280px] md:w-[320px] mx-auto mt-16">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="cyber-card p-4">
-                    <div className="h-2 w-16 bg-cyber-primary/20 mb-2 rounded"></div>
-                    <div className="h-10 w-full bg-gradient-to-r from-cyber-primary/10 to-cyber-secondary/10 rounded"></div>
-                  </div>
-                  <div className="cyber-card p-4">
-                    <div className="h-2 w-10 bg-cyber-secondary/20 mb-2 rounded"></div>
-                    <div className="h-10 w-full bg-gradient-to-r from-cyber-secondary/10 to-cyber-accent/10 rounded"></div>
-                  </div>
-                  <div className="cyber-card p-4">
-                    <div className="h-2 w-12 bg-cyber-accent/20 mb-2 rounded"></div>
-                    <div className="h-10 w-full bg-gradient-to-r from-cyber-accent/10 to-cyber-primary/10 rounded"></div>
-                  </div>
-                  <div className="cyber-card p-4">
-                    <div className="h-2 w-14 bg-cyber-primary/20 mb-2 rounded"></div>
-                    <div className="h-10 w-full bg-gradient-to-r from-cyber-primary/10 to-cyber-secondary/10 rounded"></div>
-                  </div>
-                </div>
-                <div className="cyber-card p-6">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Shield className="h-8 w-8 text-cyber-primary" />
-                    <div>
-                      <div className="h-4 w-20 bg-cyber-primary/20 rounded"></div>
-                      <div className="h-3 w-32 bg-gray-200 dark:bg-gray-700 mt-1 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-2 w-5/6 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-2 w-4/6 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  </div>
-                  <div className="mt-4 h-8 w-20 bg-cyber-secondary/30 rounded"></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
