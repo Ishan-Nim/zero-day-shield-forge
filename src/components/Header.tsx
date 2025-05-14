@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X } from "lucide-react";
+import { Menu, X, Binary } from "lucide-react";
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <a href="#" className="flex items-center space-x-2 text-2xl font-bold">
-            <Shield className="h-8 w-8 text-cyber-primary" />
+            <Binary className="h-8 w-8 text-cyber-primary" />
             <span className="gradient-text">Zeroday</span>
           </a>
           

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, ExternalLink } from "lucide-react";
+import { Binary, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
             <div className="flex items-center space-x-2 text-2xl font-bold mb-6">
-              <Shield className="h-8 w-8 text-cyber-secondary" />
+              <Binary className="h-8 w-8 text-cyber-secondary" />
               <span className="bg-gradient-to-r from-cyber-secondary to-cyber-accent bg-clip-text text-transparent">
                 Zeroday
               </span>
@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
                 <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Vulnerability Assessment</a>
               </li>
               <li>
-                <Link to="/services/web-app-scanner" className="text-gray-400 hover:text-cyber-secondary transition-colors flex items-center">
+                <Link to="/services/web-app-scanner" className="text-gray-400 hover:text-cyber-secondary transition-colors flex items-center font-medium text-cyber-secondary">
                   Web App Scanner
                   <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
                 </Link>
