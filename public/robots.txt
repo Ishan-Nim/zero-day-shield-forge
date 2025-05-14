@@ -1,8 +1,18 @@
+
+# Zeroday SEO Configuration
+# Allow all web crawlers to access all content
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 10
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 15
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 10
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +22,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /customer-panel/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://zeroday.lk/sitemap.xml

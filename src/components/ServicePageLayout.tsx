@@ -1,13 +1,17 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import SEO from './SEO';
+import { ServiceSchema } from './StructuredData';
 
 interface ServicePageLayoutProps {
   serviceTitle: string;
   serviceIcon: React.ReactNode;
   bannerImage: string;
   description: string;
+  keywords?: string;
   whatWeDo: string;
   howWeDoIt: {
     title: string;
@@ -23,14 +27,33 @@ const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({
   serviceIcon,
   bannerImage,
   description,
+  keywords = "cybersecurity, security services, Sri Lanka",
   whatWeDo,
   howWeDoIt,
   benefits,
   callToAction = "Contact us today to get started.",
   children,
 }) => {
+  // Generate a canonical URL for this service
+  const serviceSlug = serviceTitle
+    .toLowerCase()
+    .replace(/[^\w\s]/gi, '')
+    .replace(/\s+/g, '-');
+  const canonicalUrl = `https://zeroday.lk/services/${serviceSlug}`;
+  
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title={`${serviceTitle} - Zeroday (Pvt) Ltd`}
+        description={description}
+        keywords={`${keywords}, ${serviceTitle.toLowerCase()}`}
+        canonicalUrl={canonicalUrl}
+      />
+      <ServiceSchema
+        name={serviceTitle}
+        description={description}
+        url={canonicalUrl}
+      />
       <Header />
       
       {/* Banner */}
