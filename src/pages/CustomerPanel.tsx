@@ -1,274 +1,142 @@
 
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Shield, Zap, Code, Lock, FileText } from "lucide-react";
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-
-const products = [
-  {
-    id: 'web-app-scanner',
-    name: 'Web App Vulnerability Scanner',
-    description: 'Automated security testing for web applications',
-    status: 'active',
-    icon: Shield,
-    lastScan: '2023-05-12',
-    nextScan: '2023-05-19',
-  },
-  {
-    id: 'penetration-testing',
-    name: 'Penetration Testing',
-    description: 'Manual security assessment by experts',
-    status: 'inactive',
-    icon: Zap,
-    lastScan: '-',
-    nextScan: '-',
-  },
-  {
-    id: 'plugin-development',
-    name: 'Security Plugin Development',
-    description: 'Custom security plugins for your platform',
-    status: 'inactive',
-    icon: Code,
-    lastScan: '-',
-    nextScan: '-',
-  },
-  {
-    id: 'data-protection',
-    name: 'Data Protection Service',
-    description: 'End-to-end encryption and data security',
-    status: 'inactive',
-    icon: Lock,
-    lastScan: '-',
-    nextScan: '-',
-  },
-  {
-    id: 'compliance',
-    name: 'Compliance Solutions',
-    description: 'Meet industry regulations and standards',
-    status: 'inactive',
-    icon: FileText,
-    lastScan: '-',
-    nextScan: '-',
-  },
-];
+import { 
+  Package, 
+  CreditCard, 
+  LineChart, 
+  Shield, 
+  ArrowRight, 
+  Zap, 
+  Lock, 
+  Calendar
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import CustomerPanelLayout from '@/components/CustomerPanelLayout';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 
 const CustomerPanel: React.FC = () => {
-  const [userProducts, setUserProducts] = useState(products);
-
-  const toggleProductStatus = (productId: string) => {
-    setUserProducts(userProducts.map(product => {
-      if (product.id === productId) {
-        return {
-          ...product,
-          status: product.status === 'active' ? 'inactive' : 'active',
-          nextScan: product.status === 'inactive' ? getNextScanDate() : '-',
-        };
-      }
-      return product;
-    }));
-  };
-
-  const getNextScanDate = () => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    return date.toISOString().split('T')[0];
-  };
+  const [userProducts, setUserProducts] = useState([
+    {
+      id: 'web-app-scanner',
+      name: 'Web App Vulnerability Scanner',
+      description: 'Automated security testing for web applications',
+      status: 'active',
+      icon: Shield,
+      lastScan: '2023-05-12',
+      nextScan: '2023-05-19',
+    },
+    {
+      id: 'penetration-testing',
+      name: 'Penetration Testing',
+      description: 'Manual security assessment by experts',
+      status: 'inactive',
+      icon: Zap,
+      lastScan: '-',
+      nextScan: '-',
+    }
+  ]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Customer Panel</h1>
-            <p className="text-gray-600">Manage your security products and subscriptions</p>
-          </div>
+    <CustomerPanelLayout>
+      <div className="space-y-6">
+        {/* Welcome Section */}
+        <section>
+          <h1 className="text-3xl font-bold mb-2">Welcome back, John</h1>
+          <p className="text-gray-600">Here's an overview of your account and security services.</p>
+        </section>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Products</p>
+                  <p className="text-2xl font-bold">1</p>
+                </div>
+                <div className="bg-cyber-primary/10 p-3 rounded-full">
+                  <Package className="h-6 w-6 text-cyber-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
-          <div className="grid grid-cols-1 gap-8">
-            <section className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-              <h2 className="text-xl font-bold mb-4">Your Products</h2>
-              
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Last Scan</TableHead>
-                      <TableHead>Next Scan</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {userProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div className="flex items-center">
-                            <div className="bg-cyber-primary/10 p-2 rounded-full mr-3">
-                              <product.icon className="h-5 w-5 text-cyber-primary" />
-                            </div>
-                            {product.name}
-                          </div>
-                        </TableCell>
-                        <TableCell>{product.description}</TableCell>
-                        <TableCell>{product.lastScan}</TableCell>
-                        <TableCell>{product.nextScan}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center">
-                            <div className={`w-3 h-3 rounded-full mr-2 ${product.status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                            <span className={product.status === 'active' ? 'text-green-600 font-medium' : 'text-gray-500'}>
-                              {product.status === 'active' ? 'Active' : 'Inactive'}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <Switch 
-                                id={`activate-${product.id}`} 
-                                checked={product.status === 'active'}
-                                onCheckedChange={() => toggleProductStatus(product.id)}
-                              />
-                              <Label htmlFor={`activate-${product.id}`}>
-                                {product.status === 'active' ? 'Activated' : 'Activate'}
-                              </Label>
-                            </div>
-                            
-                            {product.status === 'active' && (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button variant="outline" size="sm">Configure</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Configure {product.name}</DialogTitle>
-                                    <DialogDescription>
-                                      Adjust settings for your {product.name} subscription.
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  
-                                  <div className="grid gap-4 py-4">
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                      <Label htmlFor="scan-frequency" className="text-right">
-                                        Scan Frequency
-                                      </Label>
-                                      <select 
-                                        id="scan-frequency"
-                                        className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
-                                      >
-                                        <option value="weekly">Weekly</option>
-                                        <option value="biweekly">Bi-weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                      </select>
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                      <Label htmlFor="email-alerts" className="text-right">
-                                        Email Alerts
-                                      </Label>
-                                      <Input id="email-alerts" defaultValue="user@example.com" className="col-span-3" />
-                                    </div>
-                                  </div>
-                                  
-                                  <DialogFooter>
-                                    <Button type="submit">Save changes</Button>
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </section>
-            
-            <section className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-              <h2 className="text-xl font-bold mb-4">Billing Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium mb-3">Current Subscription</h3>
-                  <div className="bg-cyber-primary/5 border border-cyber-primary/20 rounded-lg p-4">
-                    <div className="flex justify-between mb-2">
-                      <span>Plan:</span>
-                      <span className="font-medium">Professional</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span>Billing Cycle:</span>
-                      <span className="font-medium">Monthly</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span>Next Payment:</span>
-                      <span className="font-medium">June 15, 2023</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Amount:</span>
-                      <span className="font-medium">$99.00</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 space-x-3">
-                    <Button variant="outline">Update Payment Method</Button>
-                    <Button variant="outline">View Invoices</Button>
-                  </div>
+                  <p className="text-sm font-medium text-muted-foreground">Current Plan</p>
+                  <p className="text-2xl font-bold">Professional</p>
                 </div>
-                <div>
-                  <h3 className="font-medium mb-3">Plan Options</h3>
-                  <div className="space-y-4">
-                    <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors">
-                      <div className="flex justify-between">
-                        <div>
-                          <h4 className="font-medium">Basic</h4>
-                          <p className="text-sm text-gray-600">For small websites and applications</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">$49</div>
-                          <div className="text-sm text-gray-600">per month</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border-2 border-cyber-primary rounded-lg p-4 bg-cyber-primary/5 relative">
-                      <div className="absolute top-0 right-0 bg-cyber-primary text-white text-xs px-2 py-1 rounded-bl rounded-tr">
-                        Current Plan
-                      </div>
-                      <div className="flex justify-between">
-                        <div>
-                          <h4 className="font-medium">Professional</h4>
-                          <p className="text-sm text-gray-600">For medium-sized businesses</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">$99</div>
-                          <div className="text-sm text-gray-600">per month</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors">
-                      <div className="flex justify-between">
-                        <div>
-                          <h4 className="font-medium">Enterprise</h4>
-                          <p className="text-sm text-gray-600">For large organizations</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">$249</div>
-                          <div className="text-sm text-gray-600">per month</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="bg-cyber-primary/10 p-3 rounded-full">
+                  <CreditCard className="h-6 w-6 text-cyber-primary" />
                 </div>
               </div>
-            </section>
-            
-            <section className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-              <h2 className="text-xl font-bold mb-4">Activity History</h2>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Next Invoice</p>
+                  <p className="text-2xl font-bold">May 15</p>
+                </div>
+                <div className="bg-cyber-primary/10 p-3 rounded-full">
+                  <Calendar className="h-6 w-6 text-cyber-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Security Score</p>
+                  <p className="text-2xl font-bold">85<span className="text-sm text-muted-foreground">/100</span></p>
+                </div>
+                <div className="bg-cyber-primary/10 p-3 rounded-full">
+                  <LineChart className="h-6 w-6 text-cyber-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Activity & Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Quick Actions */}
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Button className="w-full justify-between">
+                  Run Security Scan <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button className="w-full justify-between" variant="outline">
+                  View Latest Report <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button className="w-full justify-between" variant="outline">
+                  Manage Subscription <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button className="w-full justify-between" variant="outline">
+                  Contact Support <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Your latest security events</CardDescription>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="bg-cyber-primary/10 p-2 rounded-full mr-4">
@@ -282,6 +150,7 @@ const CustomerPanel: React.FC = () => {
                     <p className="text-sm text-gray-600">Found 3 low severity issues. No critical vulnerabilities detected.</p>
                   </div>
                 </div>
+                
                 <div className="flex items-start">
                   <div className="bg-cyber-primary/10 p-2 rounded-full mr-4">
                     <Shield className="h-5 w-5 text-cyber-primary" />
@@ -294,6 +163,7 @@ const CustomerPanel: React.FC = () => {
                     <p className="text-sm text-gray-600">Scanning domain: example.com</p>
                   </div>
                 </div>
+                
                 <div className="flex items-start">
                   <div className="bg-cyber-primary/10 p-2 rounded-full mr-4">
                     <Lock className="h-5 w-5 text-cyber-primary" />
@@ -307,13 +177,67 @@ const CustomerPanel: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline" className="w-full">View All Activity</Button>
+            </CardFooter>
+          </Card>
         </div>
-      </main>
-      
-      <Footer />
-    </div>
+
+        {/* Your Services/Products */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Your Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {userProducts.map(product => (
+              <Card key={product.id} className={`overflow-hidden ${product.status === 'active' ? 'border-l-4 border-l-green-500' : ''}`}>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="bg-cyber-primary/10 p-3 rounded-full mr-4">
+                      <product.icon className="h-6 w-6 text-cyber-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-lg">{product.name}</h3>
+                      <p className="text-sm text-gray-600">{product.description}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-sm">
+                    <div className="flex items-center">
+                      <div className={`w-3 h-3 rounded-full mr-2 ${product.status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                      <span>{product.status === 'active' ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    
+                    {product.status === 'active' && (
+                      <div className="text-right">
+                        <div className="text-xs text-gray-600">Next scan:</div>
+                        <div>{product.nextScan}</div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t flex justify-between">
+                    <Button variant="outline" size="sm">
+                      {product.status === 'active' ? 'Manage' : 'Activate'}
+                    </Button>
+                    <Link to={`/services/${product.id}`}>
+                      <Button variant="ghost" size="sm">Details</Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="mt-4">
+            <Link to="/customer-panel/products">
+              <Button variant="link" className="p-0">
+                View all products <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+      </div>
+    </CustomerPanelLayout>
   );
 };
 

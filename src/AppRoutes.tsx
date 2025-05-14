@@ -25,6 +25,11 @@ import ComplianceSolutions from './pages/services/ComplianceSolutions';
 import SecureDevelopment from './pages/services/SecureDevelopment';
 import WebAppVulnerabilityScanner from './pages/services/WebAppVulnerabilityScanner';
 import CustomerPanel from './pages/CustomerPanel';
+import CustomerPanelSubscriptions from './pages/CustomerPanelSubscriptions';
+import CustomerPanelProducts from './pages/CustomerPanelProducts';
+import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
+import CustomerPanelSettings from './pages/CustomerPanelSettings';
+import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
 
 const AppRoutes = () => {
   return (
@@ -33,7 +38,14 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
+      
+      {/* Customer Panel Routes */}
       <Route path="/customer-panel" element={<CustomerPanel />} />
+      <Route path="/customer-panel/subscriptions" element={<CustomerPanelSubscriptions />} />
+      <Route path="/customer-panel/products" element={<CustomerPanelProducts />} />
+      <Route path="/customer-panel/invoices" element={<CustomerPanelInvoices />} />
+      <Route path="/customer-panel/settings" element={<CustomerPanelSettings />} />
+      <Route path="/customer-panel/notifications" element={<CustomerPanelNotifications />} />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />
