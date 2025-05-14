@@ -103,7 +103,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({ 
+      // Sign up the user - with email confirmation disabled in Supabase,
+      // this will create the account immediately
+      const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
@@ -112,11 +114,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       });
+      
       if (error) throw error;
       
+      // Even if email confirmation is disabled, we still redirect to verification page
+      // where the user can manually activate their account
       toast({
         title: 'Account created',
-        description: 'Please check your email to verify your account.',
+        description: 'Your account has been created successfully.',
       });
     } catch (error: any) {
       toast({
