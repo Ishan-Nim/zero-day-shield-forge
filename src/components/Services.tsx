@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, Code, Database, Cpu, Lock, Server, Radio, FileKey } from 'lucide-react';
+import { Shield, Code, Database, Cpu, Lock, Server, Radio, FileKey, FileSearch } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type ServiceCardProps = {
@@ -31,6 +31,12 @@ const Services: React.FC = () => {
       title: "Vulnerability Assessment",
       description: "Comprehensive scanning and identification of security weaknesses in your systems before they can be exploited.",
       url: "/services/vulnerability-assessment"
+    },
+    {
+      icon: <FileSearch className="h-6 w-6 text-cyber-primary" />,
+      title: "Web App Vulnerability Scanner",
+      description: "Automated scanning tool to detect and report vulnerabilities in your web applications with detailed reporting.",
+      url: "/services/web-app-scanner"
     },
     {
       icon: <Code className="h-6 w-6 text-cyber-primary" />,
@@ -88,7 +94,7 @@ const Services: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <ServiceCard 
               key={index}

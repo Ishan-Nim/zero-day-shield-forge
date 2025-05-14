@@ -23,6 +23,7 @@ import DevSecOpsIntegration from './pages/services/DevSecOpsIntegration';
 import SecurityArchitecture from './pages/services/SecurityArchitecture';
 import ComplianceSolutions from './pages/services/ComplianceSolutions';
 import SecureDevelopment from './pages/services/SecureDevelopment';
+import WebAppVulnerabilityScanner from './pages/services/WebAppVulnerabilityScanner';
 
 const AppRoutes = () => {
   return (
@@ -52,6 +53,7 @@ const AppRoutes = () => {
       <Route path="/services/security-architecture" element={<SecurityArchitecture />} />
       <Route path="/services/compliance-solutions" element={<ComplianceSolutions />} />
       <Route path="/services/secure-development" element={<SecureDevelopment />} />
+      <Route path="/services/web-app-scanner" element={<WebAppVulnerabilityScanner />} />
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
