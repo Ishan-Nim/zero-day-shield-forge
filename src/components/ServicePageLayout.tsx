@@ -19,6 +19,7 @@ interface ServicePageLayoutProps {
   }[];
   benefits: string[];
   callToAction?: string;
+  children?: React.ReactNode;
 }
 
 const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({
@@ -30,6 +31,7 @@ const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({
   howWeDoIt,
   benefits,
   callToAction = "Ready to enhance your security posture? Contact us today for a consultation.",
+  children,
 }) => {
   return (
     <div className="min-h-screen flex flex-col">
@@ -122,6 +124,9 @@ const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({
             </div>
           </div>
         </section>
+        
+        {/* Additional sections passed as children */}
+        {children}
         
         {/* CTA */}
         <section className="bg-cyber-primary text-white py-16">
