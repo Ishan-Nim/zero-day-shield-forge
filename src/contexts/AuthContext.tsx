@@ -38,8 +38,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setTimeout(() => {
             fetchUserProfile(newSession.user.id);
           }, 0);
+          
+          // Auto-redirect to customer panel when user logs in
+          if (_event === 'SIGNED_IN') {
+            navigate('/customer-panel');
+          }
         } else {
           setProfile(null);
+          
+          // Auto-redirect to login page when user logs out
+          if (_event === 'SIGNED_OUT') {
+            navigate('/auth/login');
+          }
         }
       }
     );
@@ -52,12 +62,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (currentSession?.user) {
         fetchUserProfile(currentSession.user.id);
+        
+        // Redirect to customer panel if already logged in
+        if (window.location.pathname === '/' || 
+            window.location.pathname === '/auth/login' || 
+            window.location.pathname === '/auth/register') {
+          navigate('/customer-panel');
+        }
       }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -96,9 +113,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           toast({
             title: "Notice",
             description: "Proceeding without email confirmation for testing purposes.",
+            duration: 3000,
           });
-          navigate('/customer-panel');
-          return;
+          
+          // Try to sign in again to force the session
+          const { data: forceData } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (forceData.session) {
+            navigate('/customer-panel');
+            return;
+          } else {
+            // If still no session, navigate anyway (for testing)
+            navigate('/customer-panel');
+            return;
+          }
         }
         
         toast({
@@ -114,6 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toast({
           title: "Sign in successful",
           description: "Welcome back!",
+          duration: 3000,
         });
         
         navigate('/customer-panel');
@@ -151,6 +183,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Try to sign in directly if signup was successful
       if (data.user) {
         console.log("User created, attempting to sign in");
+        toast({
+          title: "Account created",
+          description: "Signing you in automatically...",
+          duration: 3000,
+        });
         
         // Try to sign in directly
         await signIn(email, password);
