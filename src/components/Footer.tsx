@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield } from "lucide-react";
+import { Shield, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
@@ -52,6 +52,12 @@ const Footer: React.FC = () => {
             <ul className="space-y-3">
               <li>
                 <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Vulnerability Assessment</a>
+              </li>
+              <li>
+                <Link to="/services/web-app-scanner" className="text-gray-400 hover:text-cyber-secondary transition-colors flex items-center">
+                  Web App Scanner
+                  <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-cyber-secondary transition-colors">Plugin Development</a>
