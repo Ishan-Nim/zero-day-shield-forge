@@ -43,10 +43,14 @@ const Header: React.FC = () => {
             <a href="#how-we-work" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">Process</a>
             <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">About</a>
             <a href="#faq" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">FAQ</a>
-            <Link to="/customer-panel" className="text-cyber-primary font-medium hover:text-cyber-accent transition-colors">Customer Panel</Link>
           </nav>
           
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center space-x-4">
+            <Link to="/customer-panel">
+              <Button variant="outline" className="border-cyber-primary text-cyber-primary hover:bg-cyber-primary hover:text-white">
+                Customer Panel
+              </Button>
+            </Link>
             <Link to="/contact">
               <Button className="bg-cyber-primary hover:bg-cyber-accent text-white">
                 Contact Us
@@ -70,12 +74,19 @@ const Header: React.FC = () => {
             <a href="#how-we-work" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>Process</a>
             <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>About</a>
             <a href="#faq" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>FAQ</a>
-            <Link to="/customer-panel" className="text-cyber-primary font-medium hover:text-cyber-accent transition-colors p-2" onClick={toggleMobileMenu}>Customer Panel</Link>
-            <Link to="/contact" onClick={toggleMobileMenu}>
-              <Button className="bg-cyber-primary hover:bg-cyber-accent text-white w-full">
-                Contact Us
-              </Button>
-            </Link>
+            
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+              <Link to="/customer-panel" onClick={toggleMobileMenu} className="w-full">
+                <Button variant="outline" className="w-full border-cyber-primary text-cyber-primary hover:bg-cyber-primary hover:text-white">
+                  Customer Panel
+                </Button>
+              </Link>
+              <Link to="/contact" onClick={toggleMobileMenu} className="w-full">
+                <Button className="w-full bg-cyber-primary hover:bg-cyber-accent text-white">
+                  Contact Us
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       )}
