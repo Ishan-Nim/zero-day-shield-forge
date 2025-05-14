@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Shield, 
   Zap, 
@@ -15,75 +15,168 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
+
+const iconMap: Record<string, any> = {
+  'Web App Scanner Basic': Shield,
+  'Web App Scanner Pro': Shield,
+  'Penetration Testing Package': Zap,
+  'Security Audit': FileText,
+  'Security Plugin Development': Code,
+  'Data Protection Service': Lock,
+};
 
 const CustomerPanelProducts: React.FC = () => {
-  const [products, setProducts] = useState([
-    {
-      id: 'web-app-scanner',
-      name: 'Web App Vulnerability Scanner',
-      description: 'Automated security testing for web applications',
-      status: 'active',
-      icon: Shield,
-      lastScan: '2023-05-12',
-      nextScan: '2023-05-19',
-    },
-    {
-      id: 'penetration-testing',
-      name: 'Penetration Testing',
-      description: 'Manual security assessment by experts',
-      status: 'inactive',
-      icon: Zap,
-      lastScan: '-',
-      nextScan: '-',
-    },
-    {
-      id: 'plugin-development',
-      name: 'Security Plugin Development',
-      description: 'Custom security plugins for your platform',
-      status: 'inactive',
-      icon: Code,
-      lastScan: '-',
-      nextScan: '-',
-    },
-    {
-      id: 'data-protection',
-      name: 'Data Protection Service',
-      description: 'End-to-end encryption and data security',
-      status: 'inactive',
-      icon: Lock,
-      lastScan: '-',
-      nextScan: '-',
-    },
-    {
-      id: 'compliance',
-      name: 'Compliance Solutions',
-      description: 'Meet industry regulations and standards',
-      status: 'inactive',
-      icon: FileText,
-      lastScan: '-',
-      nextScan: '-',
-    },
-  ]);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [products, setProducts] = useState<any[]>([]);
+  const [userSubscriptions, setUserSubscriptions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const toggleProductStatus = (productId: string) => {
-    setProducts(products.map(product => {
-      if (product.id === productId) {
-        const newStatus = product.status === 'active' ? 'inactive' : 'active';
-        return {
-          ...product,
-          status: newStatus,
-          nextScan: newStatus === 'active' ? getNextScanDate() : '-',
-        };
+  useEffect(() => {
+    if (user) {
+      fetchProducts();
+      fetchUserSubscriptions();
+    }
+  }, [user]);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('price');
+      
+      if (error) throw error;
+      
+      if (data) {
+        setProducts(data);
       }
-      return product;
-    }));
+    } catch (error: any) {
+      toast({
+        title: 'Error fetching products',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const getNextScanDate = () => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    return date.toISOString().split('T')[0];
+  const fetchUserSubscriptions = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*, product:product_id(*)')
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      
+      if (data) {
+        setUserSubscriptions(data);
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error fetching subscriptions',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
   };
+
+  const toggleProductSubscription = async (product: any) => {
+    if (!user) return;
+    
+    const existingSubscription = userSubscriptions.find(
+      sub => sub.product_id === product.id && sub.status === 'active'
+    );
+    
+    try {
+      if (existingSubscription) {
+        // Cancel subscription
+        const { error } = await supabase
+          .from('subscriptions')
+          .update({ status: 'cancelled' })
+          .eq('id', existingSubscription.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: 'Subscription cancelled',
+          description: `Your subscription to ${product.name} has been cancelled.`,
+        });
+      } else {
+        // Create new subscription
+        const { error } = await supabase
+          .from('subscriptions')
+          .insert({
+            user_id: user.id,
+            product_id: product.id,
+            status: 'active',
+            start_date: new Date().toISOString(),
+          });
+        
+        if (error) throw error;
+        
+        toast({
+          title: 'Subscription activated',
+          description: `Your subscription to ${product.name} has been activated.`,
+        });
+      }
+      
+      // Refresh subscriptions
+      await fetchUserSubscriptions();
+    } catch (error: any) {
+      toast({
+        title: 'Error managing subscription',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getIconForProduct = (productName: string) => {
+    const IconComponent = iconMap[productName] || Shield;
+    return IconComponent;
+  };
+
+  const isProductActive = (productId: string) => {
+    return userSubscriptions.some(
+      sub => sub.product_id === productId && sub.status === 'active'
+    );
+  };
+
+  const getNextScanDate = (productId: string) => {
+    const subscription = userSubscriptions.find(
+      sub => sub.product_id === productId && sub.status === 'active'
+    );
+    
+    if (subscription) {
+      const startDate = new Date(subscription.start_date);
+      const nextScan = new Date(startDate);
+      nextScan.setDate(nextScan.getDate() + 7); // Assuming weekly scans
+      return nextScan.toISOString().split('T')[0];
+    }
+    
+    return '-';
+  };
+
+  if (isLoading) {
+    return (
+      <CustomerPanelLayout>
+        <div className="flex items-center justify-center h-64">
+          <p>Loading products...</p>
+        </div>
+      </CustomerPanelLayout>
+    );
+  }
+
+  const subscriptionProducts = products.filter(p => p.is_subscription);
+  const oneTimeProducts = products.filter(p => !p.is_subscription);
 
   return (
     <CustomerPanelLayout>
@@ -96,8 +189,8 @@ const CustomerPanelProducts: React.FC = () => {
         {/* Products List */}
         <Card>
           <CardHeader>
-            <CardTitle>Your Products</CardTitle>
-            <CardDescription>Activate or manage your security products</CardDescription>
+            <CardTitle>Your Subscriptions</CardTitle>
+            <CardDescription>Activate or manage your security subscriptions</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -106,96 +199,133 @@ const CustomerPanelProducts: React.FC = () => {
                   <tr className="border-b">
                     <th className="text-left p-4">Product</th>
                     <th className="text-left p-4 hidden md:table-cell">Description</th>
-                    <th className="text-left p-4 hidden lg:table-cell">Last Scan</th>
+                    <th className="text-left p-4 hidden lg:table-cell">Price</th>
                     <th className="text-left p-4 hidden lg:table-cell">Next Scan</th>
                     <th className="text-left p-4">Status</th>
                     <th className="text-right p-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
-                    <tr key={product.id} className="border-b hover:bg-muted/50">
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <div className="bg-cyber-primary/10 p-2 rounded-full mr-3">
-                            <product.icon className="h-5 w-5 text-cyber-primary" />
+                  {subscriptionProducts.map((product) => {
+                    const isActive = isProductActive(product.id);
+                    const ProductIcon = getIconForProduct(product.name);
+                    
+                    return (
+                      <tr key={product.id} className="border-b hover:bg-muted/50">
+                        <td className="p-4">
+                          <div className="flex items-center">
+                            <div className="bg-cyber-primary/10 p-2 rounded-full mr-3">
+                              <ProductIcon className="h-5 w-5 text-cyber-primary" />
+                            </div>
+                            <span className="font-medium">{product.name}</span>
                           </div>
-                          <span className="font-medium">{product.name}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 hidden md:table-cell text-sm text-gray-600">
-                        {product.description}
-                      </td>
-                      <td className="p-4 hidden lg:table-cell">{product.lastScan}</td>
-                      <td className="p-4 hidden lg:table-cell">{product.nextScan}</td>
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <div className={`w-3 h-3 rounded-full mr-2 ${product.status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                          <span className={product.status === 'active' ? 'text-green-600 font-medium' : 'text-gray-500'}>
-                            {product.status === 'active' ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center justify-end space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <Switch 
-                              id={`activate-${product.id}`} 
-                              checked={product.status === 'active'}
-                              onCheckedChange={() => toggleProductStatus(product.id)}
-                            />
-                            <Label htmlFor={`activate-${product.id}`} className="hidden sm:block">
-                              {product.status === 'active' ? 'Activated' : 'Activate'}
-                            </Label>
+                        </td>
+                        <td className="p-4 hidden md:table-cell text-sm text-gray-600">
+                          {product.description}
+                        </td>
+                        <td className="p-4 hidden lg:table-cell">${product.price}/month</td>
+                        <td className="p-4 hidden lg:table-cell">{isActive ? getNextScanDate(product.id) : '-'}</td>
+                        <td className="p-4">
+                          <div className="flex items-center">
+                            <div className={`w-3 h-3 rounded-full mr-2 ${isActive ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                            <span className={isActive ? 'text-green-600 font-medium' : 'text-gray-500'}>
+                              {isActive ? 'Active' : 'Inactive'}
+                            </span>
                           </div>
-                          
-                          {product.status === 'active' && (
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm">Configure</Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Configure {product.name}</DialogTitle>
-                                  <DialogDescription>
-                                    Adjust settings for your {product.name} subscription.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                
-                                <div className="grid gap-4 py-4">
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="scan-frequency" className="text-right">
-                                      Scan Frequency
-                                    </Label>
-                                    <select 
-                                      id="scan-frequency"
-                                      className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
-                                    >
-                                      <option value="weekly">Weekly</option>
-                                      <option value="biweekly">Bi-weekly</option>
-                                      <option value="monthly">Monthly</option>
-                                    </select>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center justify-end space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <Switch 
+                                id={`activate-${product.id}`} 
+                                checked={isActive}
+                                onCheckedChange={() => toggleProductSubscription(product)}
+                              />
+                              <Label htmlFor={`activate-${product.id}`} className="hidden sm:block">
+                                {isActive ? 'Activated' : 'Activate'}
+                              </Label>
+                            </div>
+                            
+                            {isActive && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button variant="outline" size="sm">Configure</Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Configure {product.name}</DialogTitle>
+                                    <DialogDescription>
+                                      Adjust settings for your {product.name} subscription.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  
+                                  <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="scan-frequency" className="text-right">
+                                        Scan Frequency
+                                      </Label>
+                                      <select 
+                                        id="scan-frequency"
+                                        className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
+                                      >
+                                        <option value="weekly">Weekly</option>
+                                        <option value="biweekly">Bi-weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                      </select>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="email-alerts" className="text-right">
+                                        Email Alerts
+                                      </Label>
+                                      <Input id="email-alerts" defaultValue={user?.email || ""} className="col-span-3" />
+                                    </div>
                                   </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="email-alerts" className="text-right">
-                                      Email Alerts
-                                    </Label>
-                                    <Input id="email-alerts" defaultValue="user@example.com" className="col-span-3" />
-                                  </div>
-                                </div>
-                                
-                                <DialogFooter>
-                                  <Button type="submit">Save changes</Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                                  
+                                  <DialogFooter>
+                                    <Button type="submit">Save changes</Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* One-time Products */}
+        <Card>
+          <CardHeader>
+            <CardTitle>One-time Services</CardTitle>
+            <CardDescription>Purchase security services</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {oneTimeProducts.map(product => {
+                const ProductIcon = getIconForProduct(product.name);
+                return (
+                  <Card key={product.id} className="overflow-hidden">
+                    <CardHeader>
+                      <div className="flex items-center">
+                        <div className="bg-cyber-primary/10 p-3 rounded-full mr-3">
+                          <ProductIcon className="h-5 w-5 text-cyber-primary" />
+                        </div>
+                        <CardTitle className="text-lg">{product.name}</CardTitle>
+                      </div>
+                      <CardDescription>{product.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-2xl font-bold mb-4">${product.price}</p>
+                      <Button className="w-full">Purchase</Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

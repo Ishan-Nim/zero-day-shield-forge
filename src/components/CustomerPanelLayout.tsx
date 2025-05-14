@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 interface CustomerPanelLayoutProps {
   children: React.ReactNode;
@@ -19,7 +21,24 @@ interface CustomerPanelLayoutProps {
 
 const CustomerPanelLayout: React.FC<CustomerPanelLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const { user, profile, signOut } = useAuth();
   const isActive = (path: string) => location.pathname === path;
+  
+  // Get user initials for the avatar fallback
+  const getInitials = () => {
+    if (profile?.full_name) {
+      return profile.full_name
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase();
+    }
+    return user?.email?.substring(0, 2).toUpperCase() || 'U';
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -32,6 +51,18 @@ const CustomerPanelLayout: React.FC<CustomerPanelLayoutProps> = ({ children }) =
             <aside className="md:col-span-1">
               <div className="sticky top-24 bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
                 <div className="p-4 bg-gradient-to-r from-cyber-primary to-cyber-accent text-white">
+                  {profile && (
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Avatar>
+                        <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+                        <AvatarFallback>{getInitials()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{profile.full_name || 'User'}</p>
+                        <p className="text-xs opacity-80">{user?.email}</p>
+                      </div>
+                    </div>
+                  )}
                   <h2 className="font-bold text-lg">Customer Panel</h2>
                 </div>
                 
@@ -94,7 +125,10 @@ const CustomerPanelLayout: React.FC<CustomerPanelLayoutProps> = ({ children }) =
                   </ul>
                   
                   <div className="mt-6 pt-4 border-t">
-                    <button className="flex items-center px-4 py-2 w-full text-left rounded-md text-gray-600 hover:bg-gray-100 transition-colors">
+                    <button 
+                      className="flex items-center px-4 py-2 w-full text-left rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
+                      onClick={handleSignOut}
+                    >
                       <LogOut className="h-5 w-5 mr-3" />
                       Sign Out
                     </button>

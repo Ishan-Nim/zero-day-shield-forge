@@ -1,11 +1,21 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+
+// Auth Pages
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import Verification from './pages/auth/Verification';
+
+// Main Pages
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import TermsConditions from './pages/TermsConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
+
+// Company Pages
 import DiscoveryScopeDefinition from './pages/company/DiscoveryScopeDefinition';
 import CustomQuotation from './pages/company/CustomQuotation';
 import FormalAgreement from './pages/company/FormalAgreement';
@@ -15,6 +25,8 @@ import SecurityFirstPhilosophy from './pages/company/SecurityFirstPhilosophy';
 import FlexiblePayments from './pages/company/FlexiblePayments';
 import ClientFirstSupport from './pages/company/ClientFirstSupport';
 import TransparentCommunication from './pages/company/TransparentCommunication';
+
+// Service Pages
 import VulnerabilityAssessment from './pages/services/VulnerabilityAssessment';
 import PluginDevelopment from './pages/services/PluginDevelopment';
 import PenetrationTesting from './pages/services/PenetrationTesting';
@@ -24,6 +36,8 @@ import SecurityArchitecture from './pages/services/SecurityArchitecture';
 import ComplianceSolutions from './pages/services/ComplianceSolutions';
 import SecureDevelopment from './pages/services/SecureDevelopment';
 import WebAppVulnerabilityScanner from './pages/services/WebAppVulnerabilityScanner';
+
+// Customer Panel Pages
 import CustomerPanel from './pages/CustomerPanel';
 import CustomerPanelSubscriptions from './pages/CustomerPanelSubscriptions';
 import CustomerPanelProducts from './pages/CustomerPanelProducts';
@@ -31,7 +45,24 @@ import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
 import CustomerPanelSettings from './pages/CustomerPanelSettings';
 import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
 
+// Protected Route Component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const AppRoutes = () => {
+  const { user } = useAuth();
+
   return (
     <Routes>
       <Route path="/" element={<Index />} />
@@ -39,13 +70,48 @@ const AppRoutes = () => {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
       
-      {/* Customer Panel Routes */}
-      <Route path="/customer-panel" element={<CustomerPanel />} />
-      <Route path="/customer-panel/subscriptions" element={<CustomerPanelSubscriptions />} />
-      <Route path="/customer-panel/products" element={<CustomerPanelProducts />} />
-      <Route path="/customer-panel/invoices" element={<CustomerPanelInvoices />} />
-      <Route path="/customer-panel/settings" element={<CustomerPanelSettings />} />
-      <Route path="/customer-panel/notifications" element={<CustomerPanelNotifications />} />
+      {/* Auth Routes */}
+      <Route 
+        path="/auth/login" 
+        element={user ? <Navigate to="/customer-panel" replace /> : <Login />} 
+      />
+      <Route 
+        path="/auth/register" 
+        element={user ? <Navigate to="/customer-panel" replace /> : <Register />} 
+      />
+      <Route path="/auth/verification" element={<Verification />} />
+      
+      {/* Protected Customer Panel Routes */}
+      <Route path="/customer-panel" element={
+        <ProtectedRoute>
+          <CustomerPanel />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/subscriptions" element={
+        <ProtectedRoute>
+          <CustomerPanelSubscriptions />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/products" element={
+        <ProtectedRoute>
+          <CustomerPanelProducts />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/invoices" element={
+        <ProtectedRoute>
+          <CustomerPanelInvoices />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/settings" element={
+        <ProtectedRoute>
+          <CustomerPanelSettings />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/notifications" element={
+        <ProtectedRoute>
+          <CustomerPanelNotifications />
+        </ProtectedRoute>
+      } />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />
