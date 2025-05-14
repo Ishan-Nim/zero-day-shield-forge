@@ -17,43 +17,95 @@ const Verification = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
-  // Check for hash fragment parameters that might contain tokens
+  // Process both URL hash and query parameters for authentication tokens
   useEffect(() => {
-    // Function to extract tokens from URL hash
-    const extractHashParams = () => {
-      const hash = location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      return {
-        accessToken: params.get('access_token'),
-        refreshToken: params.get('refresh_token'),
-        type: params.get('type')
-      };
+    const processAuth = async () => {
+      setIsActivating(true);
+      
+      try {
+        // Extract tokens from URL hash (Supabase can use hash-based auth in some flows)
+        const hashParams = new URLSearchParams(location.hash.replace('#', ''));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type') || searchParams.get('type');
+        const token = searchParams.get('token');
+        
+        console.log("Auth detection:", { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
+          type, 
+          hasToken: !!token,
+          hash: location.hash.length > 0
+        });
+
+        // Handle hash-based authentication (common in some Supabase redirects)
+        if (accessToken && refreshToken) {
+          await handleHashAuthentication(accessToken, refreshToken);
+          return;
+        }
+        
+        // Handle standard email verification link
+        if ((type === 'email_confirmation' || type === 'signup') && token) {
+          await handleEmailVerification(token);
+          return;
+        }
+        
+        // If we have a hash but couldn't extract tokens, try to process it as a direct auth response
+        if (location.hash.length > 1 && location.hash.includes('access_token')) {
+          const currentHash = location.hash.substring(1);
+          console.log("Attempting to process hash directly:", currentHash.substring(0, 20) + "...");
+          
+          // Try to extract the session from the URL
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (data?.session) {
+            console.log("Session found after hash processing");
+            setVerificationStatus('success');
+            toast({
+              title: "Authentication successful",
+              description: "You have been successfully authenticated.",
+            });
+            
+            setTimeout(() => {
+              navigate('/customer-panel');
+            }, 1500);
+            return;
+          }
+          
+          if (error) {
+            console.error("Hash processing error:", error);
+          }
+        }
+      } catch (error) {
+        console.error('Auth processing error:', error);
+        setVerificationStatus('error');
+        toast({
+          title: "Authentication error",
+          description: "There was a problem with the authentication process.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsActivating(false);
+      }
     };
 
-    // Check both query parameters and hash fragments
-    const token = searchParams.get('token');
-    const type = searchParams.get('type');
-    const hashParams = extractHashParams();
-
-    if ((type === 'email_confirmation' || type === 'signup') && token) {
-      // Handle standard email verification link
-      handleEmailVerification(token);
-    } else if (hashParams.accessToken && hashParams.refreshToken && hashParams.type === 'signup') {
-      // Handle hash fragment authentication (common in some Supabase redirects)
-      handleHashAuthentication(hashParams.accessToken, hashParams.refreshToken);
+    // Only try to process auth if we're not already authenticated
+    if (!user && (location.hash || searchParams.size > 0)) {
+      processAuth();
     }
-  }, [location.hash, searchParams]);
+  }, [location.hash, searchParams, user, navigate, toast]);
 
   // Check if user is already authenticated
   useEffect(() => {
     if (user) {
+      console.log("User already authenticated, redirecting to customer panel");
       navigate('/customer-panel');
     }
   }, [user, navigate]);
 
   const handleHashAuthentication = async (accessToken: string, refreshToken: string) => {
-    setIsActivating(true);
     try {
+      console.log("Setting session with tokens");
       const { data, error } = await supabase.auth.setSession({
         access_token: accessToken,
         refresh_token: refreshToken
@@ -68,6 +120,7 @@ const Verification = () => {
           variant: "destructive",
         });
       } else {
+        console.log("Session set successfully:", !!data.session);
         setVerificationStatus('success');
         toast({
           title: "Authentication successful",
@@ -93,9 +146,9 @@ const Verification = () => {
   };
 
   const handleEmailVerification = async (token: string) => {
-    setIsActivating(true);
     try {
       // Try with signup confirmation type first
+      console.log("Verifying OTP with token");
       let verifyResult = await supabase.auth.verifyOtp({
         token_hash: token,
         type: 'signup'
@@ -119,6 +172,7 @@ const Verification = () => {
           variant: "destructive",
         });
       } else {
+        console.log("Verification successful");
         setVerificationStatus('success');
         toast({
           title: "Email verified",
@@ -138,8 +192,6 @@ const Verification = () => {
         description: "There was a problem verifying your email.",
         variant: "destructive",
       });
-    } finally {
-      setIsActivating(false);
     }
   };
 

@@ -13,5 +13,10 @@ additional_redirect_urls = [
   "http://localhost:4173", 
   "https://localhost:4173",
   "https://zeroday.lk",
-  "http://zeroday.lk"
+  "http://zeroday.lk",
+  "http://localhost:3000/auth/verification",
+  "https://localhost:3000/auth/verification",
+  "http://localhost:5173/auth/verification",
+  "https://localhost:5173/auth/verification",
+  "https://zeroday.lk/auth/verification"
 ]
