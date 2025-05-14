@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -72,10 +71,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (currentSession?.user) {
         fetchUserProfile(currentSession.user.id);
         
-        // Redirect to customer panel if already logged in
-        // Only redirect if we're on a public page
-        const publicPages = ['/', '/auth/login', '/auth/register', '/auth/reset-password'];
-        if (publicPages.includes(location.pathname)) {
+        // Only redirect to customer panel if we're on auth pages
+        const authPages = ['/auth/login', '/auth/register', '/auth/reset-password', '/auth/verification'];
+        if (authPages.includes(location.pathname)) {
           navigate('/customer-panel');
         }
       }
