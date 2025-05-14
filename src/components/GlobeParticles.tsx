@@ -30,9 +30,9 @@ const GlobeParticles: React.FC = () => {
     
     // Create particles
     const particles: Particle[] = [];
-    const particleCount = 800;
-    const radius = Math.min(canvas.width, canvas.height) * 0.35;
-    const colors = ['#0a4b8c', '#05b2dc', '#2176ff', '#ffffff'];
+    const particleCount = 1200; // Increased particle count for better visibility
+    const radius = Math.min(canvas.width, canvas.height) * 0.4; // Increased radius
+    const colors = ['#0a4b8c', '#05b2dc', '#2176ff', '#ffffff', '#05b2dc']; // Added more color instances
     
     for (let i = 0; i < particleCount; i++) {
       // Distribute particles in a sphere
@@ -47,14 +47,14 @@ const GlobeParticles: React.FC = () => {
         x,
         y,
         z,
-        size: Math.random() * 1.5 + 0.5,
+        size: Math.random() * 2 + 0.8, // Larger particles
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
     
     // Animation variables
     let angle = 0;
-    const rotationSpeed = 0.003;
+    const rotationSpeed = 0.005; // Slightly faster rotation
     
     // Animation function
     const animate = () => {
@@ -82,8 +82,19 @@ const GlobeParticles: React.FC = () => {
         // Draw particle
         ctx.beginPath();
         ctx.arc(projectedX, projectedY, particle.size * depth, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+        
+        // Improved visibility with stronger colors
+        const alphaHex = Math.floor(opacity * 255).toString(16).padStart(2, '0');
+        ctx.fillStyle = particle.color + alphaHex;
         ctx.fill();
+        
+        // Add glow effect for better visibility
+        if (particle.size > 1.5) {
+          ctx.beginPath();
+          ctx.arc(projectedX, projectedY, particle.size * depth * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = particle.color + '20'; // Add a glow with low opacity
+          ctx.fill();
+        }
       });
       
       // Update rotation angle
@@ -103,7 +114,7 @@ const GlobeParticles: React.FC = () => {
   return (
     <canvas 
       ref={canvasRef} 
-      className="w-full h-full absolute inset-0 z-0 opacity-80"
+      className="w-full h-full absolute inset-0 z-0 opacity-95"
       style={{ background: 'transparent' }}
     />
   );

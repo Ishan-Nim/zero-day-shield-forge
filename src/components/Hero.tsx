@@ -61,17 +61,21 @@ const Hero: React.FC = () => {
             </div>
           </div>
           
-          <div className="md:w-1/2 flex justify-center md:justify-end animate-slide-up">
-            <div className="relative">
-              {/* Particle Globe */}
-              <div className="absolute inset-0 z-0">
-                <div className="w-full h-full max-w-[450px] max-h-[450px] mx-auto">
+          <div className="md:w-1/2 flex justify-center md:justify-end animate-slide-up relative">
+            {/* 3D Particle Globe - positioned as a prominent visual element */}
+            <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center">
+              {/* Particle Globe Container with proper z-index and positioning */}
+              <div className="absolute inset-0 z-10">
+                <div className="relative w-full h-full">
                   <GlobeParticles />
                 </div>
               </div>
               
-              <div className="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-cyber-primary to-cyber-secondary rounded-full opacity-10 absolute -top-10 -left-10 animate-pulse-slow"></div>
-              <div className="bg-white dark:bg-cyber-dark p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 relative z-10">
+              {/* Background glow effects for the globe */}
+              <div className="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-cyber-primary to-cyber-secondary rounded-full opacity-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse-slow"></div>
+              
+              {/* UI Card overlay positioned over the globe */}
+              <div className="bg-white dark:bg-cyber-dark p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 relative z-20 w-[280px] md:w-[320px] mx-auto mt-16">
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="cyber-card p-4">
                     <div className="h-2 w-16 bg-cyber-primary/20 mb-2 rounded"></div>
@@ -106,7 +110,6 @@ const Hero: React.FC = () => {
                   <div className="mt-4 h-8 w-20 bg-cyber-secondary/30 rounded"></div>
                 </div>
               </div>
-              <div className="absolute -bottom-6 -right-6 h-32 w-32 bg-cyber-accent/10 rounded-full blur-xl"></div>
             </div>
           </div>
         </div>
