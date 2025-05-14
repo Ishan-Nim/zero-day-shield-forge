@@ -39,7 +39,7 @@ const Verification = () => {
     try {
       const { error } = await supabase.auth.verifyOtp({
         token_hash: token,
-        type: 'email_confirmation'
+        type: 'email_change' // Updated to use a valid type from OtpType
       });
 
       if (error) {
