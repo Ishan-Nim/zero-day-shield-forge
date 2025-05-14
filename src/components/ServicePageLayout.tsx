@@ -1,11 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
-import { AspectRatio } from './ui/aspect-ratio';
-import { Card, CardContent } from './ui/card';
 
 interface ServicePageLayoutProps {
   serviceTitle: string;
@@ -30,120 +26,92 @@ const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({
   whatWeDo,
   howWeDoIt,
   benefits,
-  callToAction = "Ready to enhance your security posture? Contact us today for a consultation.",
+  callToAction = "Contact us today to get started.",
   children,
 }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow pt-20">
-        {/* Banner */}
-        <div className="bg-gradient-to-r from-cyber-primary to-cyber-accent text-white">
-          <div className="container mx-auto px-4 py-16">
-            <Link to="/" className="flex items-center text-white hover:text-gray-200 transition-colors mb-8">
-              <ArrowLeft className="mr-2 h-5 w-5" />
-              Back to Home
-            </Link>
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="w-full md:w-1/2">
-                <div className="flex items-center mb-4">
-                  <div className="bg-white/20 p-3 rounded-full mr-4">
-                    {serviceIcon}
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-bold">{serviceTitle}</h1>
-                </div>
-                <p className="text-lg md:text-xl opacity-90">
-                  {description}
-                </p>
-              </div>
-              <div className="w-full md:w-1/2">
-                <AspectRatio ratio={16/9} className="bg-gray-200 rounded-lg overflow-hidden">
-                  <img 
-                    src={bannerImage} 
-                    alt={`${serviceTitle} banner`} 
-                    className="w-full h-full object-cover"
-                  />
-                </AspectRatio>
-              </div>
-            </div>
+      {/* Banner */}
+      <section className="relative py-20 bg-cyber-dark text-white">
+        <div className="absolute inset-0 z-0 opacity-20 bg-center bg-cover" style={{ backgroundImage: `url(${bannerImage})` }}></div>
+        <div className="relative z-10 container container-padding mx-auto">
+          <div className="flex items-center mb-4 space-x-2">
+            {serviceIcon}
+            <h1 className="text-3xl md:text-4xl font-bold">{serviceTitle}</h1>
+          </div>
+          <p className="max-w-3xl text-lg text-gray-100 mb-8">{description}</p>
+          <a href="#contact" className="bg-cyber-primary hover:bg-cyber-accent text-white font-medium rounded-md py-3 px-6 transition-colors">
+            Contact Us
+          </a>
+          <a href="#pricing" className="ml-4 bg-transparent border border-white hover:bg-white/20 text-white font-medium rounded-md py-3 px-6 transition-colors">
+            Plan Comparison
+          </a>
+        </div>
+      </section>
+      
+      {/* What We Do */}
+      <section className="py-16 bg-white">
+        <div className="container container-padding mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">What We Do</h2>
+          <div className="max-w-4xl">
+            <p className="text-lg text-gray-700">{whatWeDo}</p>
           </div>
         </div>
-        
-        {/* What We Do */}
-        <section className="bg-white dark:bg-slate-900 py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">What We Do</h2>
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-gray-700 dark:text-gray-300">{whatWeDo}</p>
+      </section>
+      
+      {/* How We Do It */}
+      <section className="py-16 bg-gray-50">
+        <div className="container container-padding mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">How We Do It</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {howWeDoIt.map((step, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <div className="inline-flex items-center justify-center bg-cyber-primary/10 text-cyber-primary w-12 h-12 rounded-full font-bold mb-4">
+                  {index + 1}
+                </div>
+                <h3 className="font-bold text-xl mb-3">{step.title}</h3>
+                <p className="text-gray-600">{step.description}</p>
               </div>
-            </div>
+            ))}
           </div>
-        </section>
-        
-        {/* How We Do It */}
-        <section className="bg-slate-50 dark:bg-slate-800 py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">How We Do It</h2>
-              <div className="space-y-8">
-                {howWeDoIt.map((step, index) => (
-                  <Card key={index} className="border-l-4 border-cyber-primary overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="flex items-start">
-                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-cyber-primary/10 text-cyber-primary font-bold mr-4">
-                          {index + 1}
-                        </span>
-                        <div>
-                          <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
-                          <p className="text-gray-600 dark:text-gray-400">{step.description}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+        </div>
+      </section>
+      
+      {/* Benefits */}
+      <section className="py-16 bg-white">
+        <div className="container container-padding mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">Benefits</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex items-start">
+                <div className="mt-1 mr-3 flex-shrink-0 bg-cyber-primary/10 p-1.5 rounded-full">
+                  <svg className="h-5 w-5 text-cyber-primary" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">{benefit}</p>
               </div>
-            </div>
+            ))}
           </div>
-        </section>
-        
-        {/* Benefits */}
-        <section className="bg-white dark:bg-slate-900 py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Key Benefits</h2>
-              <ul className="grid gap-4">
-                {benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-start">
-                    <Check className="text-cyber-accent mr-3 h-6 w-6 flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 dark:text-gray-300">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        </div>
+      </section>
+      
+      {/* Additional sections passed as children */}
+      {children}
+      
+      {/* CTA */}
+      <section className="bg-cyber-primary text-white py-16" id="contact">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-8">Start Your Security Journey</h2>
+          <div className="max-w-3xl mx-auto">
+            <a href="#contact" className="inline-block bg-white text-cyber-primary hover:bg-gray-100 font-bold py-3 px-8 rounded-md transition-colors">
+              Contact Us
+            </a>
           </div>
-        </section>
-        
-        {/* Additional sections passed as children */}
-        {children}
-        
-        {/* CTA */}
-        <section className="bg-cyber-primary text-white py-16">
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">Get Started</h2>
-              <p className="mb-8 text-white/90">{callToAction}</p>
-              <Link 
-                to="/#contact" 
-                className="inline-block px-8 py-3 bg-white text-cyber-primary font-semibold rounded-md hover:bg-gray-100 transition-colors"
-              >
-                Contact Us
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
+        </div>
+      </section>
       
       <Footer />
     </div>

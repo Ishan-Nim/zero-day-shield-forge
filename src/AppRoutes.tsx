@@ -24,6 +24,7 @@ import SecurityArchitecture from './pages/services/SecurityArchitecture';
 import ComplianceSolutions from './pages/services/ComplianceSolutions';
 import SecureDevelopment from './pages/services/SecureDevelopment';
 import WebAppVulnerabilityScanner from './pages/services/WebAppVulnerabilityScanner';
+import CustomerPanel from './pages/CustomerPanel';
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
+      <Route path="/customer-panel" element={<CustomerPanel />} />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />
