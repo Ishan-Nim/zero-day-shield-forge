@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, ShieldCheck, ShieldAlert } from "lucide-react";
+import GlobeParticles from './GlobeParticles';
 
 const Hero: React.FC = () => {
   return (
@@ -62,6 +63,13 @@ const Hero: React.FC = () => {
           
           <div className="md:w-1/2 flex justify-center md:justify-end animate-slide-up">
             <div className="relative">
+              {/* Particle Globe */}
+              <div className="absolute inset-0 z-0">
+                <div className="w-full h-full max-w-[450px] max-h-[450px] mx-auto">
+                  <GlobeParticles />
+                </div>
+              </div>
+              
               <div className="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-cyber-primary to-cyber-secondary rounded-full opacity-10 absolute -top-10 -left-10 animate-pulse-slow"></div>
               <div className="bg-white dark:bg-cyber-dark p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 relative z-10">
                 <div className="grid grid-cols-2 gap-4 mb-4">
