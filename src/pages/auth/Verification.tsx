@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,16 @@ const Verification = () => {
       
       try {
         console.log("Processing auth with location:", location.pathname, "hash length:", location.hash.length);
+        
+        // Check if URL contains localhost and log warning
+        if (location.href.includes('localhost')) {
+          console.warn("Detected localhost in URL. This may cause issues in production.");
+          toast({
+            title: "Redirect URL Issue",
+            description: "Your verification link contains localhost. Please use zeroday.lk instead.",
+            variant: "destructive",
+          });
+        }
         
         // Extract tokens from URL hash (Supabase can use hash-based auth in some flows)
         const hashParams = new URLSearchParams(location.hash.replace('#', ''));
@@ -82,7 +93,7 @@ const Verification = () => {
             });
             
             setTimeout(() => {
-              navigate('/customer-panel');
+              navigate('/');
             }, 1500);
             return;
           }
@@ -116,8 +127,8 @@ const Verification = () => {
   // Check if user is already authenticated
   useEffect(() => {
     if (user) {
-      console.log("User already authenticated, redirecting to customer panel");
-      navigate('/customer-panel');
+      console.log("User already authenticated, redirecting to home page");
+      navigate('/');
     }
   }, [user, navigate]);
 
@@ -145,9 +156,9 @@ const Verification = () => {
           description: "You have been successfully authenticated.",
         });
         
-        // Small delay before redirecting
+        // Small delay before redirecting to home page
         setTimeout(() => {
-          navigate('/customer-panel');
+          navigate('/');
         }, 1500);
       }
     } catch (error) {
@@ -206,9 +217,9 @@ const Verification = () => {
           description: "Your email has been successfully verified.",
         });
         
-        // Small delay before redirecting
+        // Small delay before redirecting to home page instead of customer panel
         setTimeout(() => {
-          navigate('/customer-panel');
+          navigate('/');
         }, 1500);
       }
     } catch (error) {
@@ -219,6 +230,8 @@ const Verification = () => {
         description: "There was a problem verifying your email.",
         variant: "destructive",
       });
+    } finally {
+      setIsActivating(false);
     }
   };
 
@@ -229,12 +242,12 @@ const Verification = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
-        // If session exists, we consider the user activated
+        // If session exists, direct to home page
         toast({
           title: "Account activated",
           description: "You are now logged in.",
         });
-        navigate('/customer-panel');
+        navigate('/');
       } else {
         // If no session, redirect to login
         toast({
@@ -273,14 +286,14 @@ const Verification = () => {
         <CardContent className="text-center">
           {verificationStatus === 'success' ? (
             <p className="mb-4 text-gray-600">
-              You will be redirected to your dashboard shortly.
+              You will be redirected to the homepage shortly.
             </p>
           ) : (
             <>
               <p className="mb-4 text-gray-600">
                 {verificationStatus === 'error' 
                   ? "There was a problem verifying your email. Please try logging in or contact support."
-                  : "Click the button below to activate your account and access your security dashboard."}
+                  : "Click the button below to activate your account."}
               </p>
               <Button 
                 onClick={handleManualActivation} 
@@ -292,7 +305,7 @@ const Verification = () => {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Activating...
                   </>
-                ) : "Continue to Dashboard"}
+                ) : "Continue to Homepage"}
               </Button>
             </>
           )}

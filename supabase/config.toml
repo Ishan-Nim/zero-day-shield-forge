@@ -7,7 +7,6 @@ enable_email_confirmations = true
 site_url = "https://zeroday.lk"
 additional_redirect_urls = [
   "https://zeroday.lk", 
-  "http://zeroday.lk",
   "https://zeroday.lk/auth/verification",
   "https://zeroday.lk/auth/update-password",
   "https://zeroday.lk/customer-panel"

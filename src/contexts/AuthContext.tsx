@@ -40,16 +40,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             fetchUserProfile(newSession.user.id);
           }, 0);
           
-          // Auto-redirect to customer panel when user logs in
+          // Don't auto-redirect to customer panel when user logs in
+          // Let user freely navigate the site
           if (_event === 'SIGNED_IN') {
             toast({
               title: "Sign in successful",
-              description: "Welcome to your customer panel!",
+              description: "Welcome!",
               duration: 3000,
             });
-            setTimeout(() => {
-              navigate('/customer-panel');
-            }, 500);
           }
         } else {
           setProfile(null);
@@ -71,13 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (currentSession?.user) {
         fetchUserProfile(currentSession.user.id);
         
-        // Only redirect to customer panel if we're on auth pages
-        const authPages = ['/auth/login', '/auth/register', '/auth/reset-password', '/auth/verification'];
-        if (authPages.includes(location.pathname)) {
-          navigate('/customer-panel');
-        }
+        // Don't auto-redirect authenticated users anymore
+        // Let them browse freely
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -139,9 +136,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           duration: 3000,
         });
         
-        // Explicitly navigate to customer panel with a delay to ensure state updates
+        // Explicitly navigate to index page with a delay to ensure state updates
         setTimeout(() => {
-          navigate('/customer-panel');
+          navigate('/');
         }, 500);
       } else {
         console.log("No session returned after sign in");
@@ -161,9 +158,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Signing up with", email);
       
-      // Get the current site URL from window.location.origin
-      // This will use the correct domain in both development and production
-      const siteUrl = window.location.origin;
+      // Get the current site URL - use the production URL for verification
+      const siteUrl = "https://zeroday.lk";
       console.log("Using site URL:", siteUrl);
       
       const { data, error } = await supabase.auth.signUp({
@@ -173,7 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             full_name: fullName,
           },
-          // Use the current site URL to build the redirect URL
+          // Use the site URL to build the redirect URL
           emailRedirectTo: `${siteUrl}/auth/verification`,
         },
       });
@@ -209,8 +205,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     try {
-      // Get the current site URL dynamically
-      const siteUrl = window.location.origin;
+      // Use the production site URL
+      const siteUrl = "https://zeroday.lk";
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${siteUrl}/auth/update-password`,
