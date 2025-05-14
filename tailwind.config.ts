@@ -70,6 +70,7 @@ export default {
 					accent: '#2176ff',
 					dark: '#1e293b',
 					light: '#f8fafc',
+					'dark-card': 'hsl(24, 20%, 18%)', // Added the dark-card color
 				}
 			},
 			borderRadius: {
