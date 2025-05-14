@@ -29,14 +29,29 @@ const Verification = () => {
         const refreshToken = hashParams.get('refresh_token');
         const type = hashParams.get('type') || searchParams.get('type');
         const token = searchParams.get('token');
+        const error = hashParams.get('error') || searchParams.get('error');
         
         console.log("Auth detection:", { 
           hasAccessToken: !!accessToken, 
           hasRefreshToken: !!refreshToken, 
           type, 
           hasToken: !!token,
+          error,
           hash: location.hash.length > 0
         });
+        
+        // Handle error in URL
+        if (error) {
+          console.error("Error in URL:", error, hashParams.get('error_description'));
+          setVerificationStatus('error');
+          toast({
+            title: "Verification Error",
+            description: hashParams.get('error_description') || "There was an error verifying your email.",
+            variant: "destructive",
+          });
+          setIsActivating(false);
+          return;
+        }
 
         // Handle hash-based authentication (common in some Supabase redirects)
         if (accessToken && refreshToken) {
