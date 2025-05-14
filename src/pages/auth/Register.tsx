@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,9 +29,16 @@ const registerSchema = z.object({
 });
 
 const Register = () => {
-  const { signUp } = useAuth();
+  const { signUp, user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Redirect if already logged in
+    if (user) {
+      navigate('/customer-panel');
+    }
+  }, [user, navigate]);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -47,10 +54,6 @@ const Register = () => {
     setIsLoading(true);
     try {
       await signUp(values.email, values.password, values.fullName);
-      // Redirecting is handled by the AuthContext once the user is verified
-      navigate('/auth/verification');
-    } catch (error) {
-      // Error is handled in the AuthContext
     } finally {
       setIsLoading(false);
     }

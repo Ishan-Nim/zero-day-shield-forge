@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -52,18 +53,42 @@ const AppRoutes = () => {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
       
-      {/* Auth Routes - kept for future use */}
+      {/* Auth Routes */}
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
       <Route path="/auth/verification" element={<Verification />} />
       
-      {/* Customer Panel Routes - No longer protected */}
-      <Route path="/customer-panel" element={<CustomerPanel />} />
-      <Route path="/customer-panel/subscriptions" element={<CustomerPanelSubscriptions />} />
-      <Route path="/customer-panel/products" element={<CustomerPanelProducts />} />
-      <Route path="/customer-panel/invoices" element={<CustomerPanelInvoices />} />
-      <Route path="/customer-panel/settings" element={<CustomerPanelSettings />} />
-      <Route path="/customer-panel/notifications" element={<CustomerPanelNotifications />} />
+      {/* Customer Panel Routes - Protected with authentication */}
+      <Route path="/customer-panel" element={
+        <ProtectedRoute>
+          <CustomerPanel />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/subscriptions" element={
+        <ProtectedRoute>
+          <CustomerPanelSubscriptions />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/products" element={
+        <ProtectedRoute>
+          <CustomerPanelProducts />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/invoices" element={
+        <ProtectedRoute>
+          <CustomerPanelInvoices />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/settings" element={
+        <ProtectedRoute>
+          <CustomerPanelSettings />
+        </ProtectedRoute>
+      } />
+      <Route path="/customer-panel/notifications" element={
+        <ProtectedRoute>
+          <CustomerPanelNotifications />
+        </ProtectedRoute>
+      } />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />

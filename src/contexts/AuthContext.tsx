@@ -1,8 +1,9 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 type AuthContextType = {
   session: Session | null;
@@ -14,59 +15,149 @@ type AuthContextType = {
   signOut: () => Promise<void>;
 };
 
-// Create a mock user and session
-const mockUser = {
-  id: 'temp-user-id',
-  email: 'temp@example.com',
-  app_metadata: {},
-  user_metadata: { full_name: 'Temporary User' },
-  aud: 'authenticated',
-  created_at: new Date().toISOString(),
-} as User;
-
-const mockSession = {
-  access_token: 'mock-token',
-  refresh_token: 'mock-refresh-token',
-  user: mockUser,
-  expires_in: 3600,
-} as Session;
-
-const mockProfile = {
-  id: 'temp-user-id',
-  full_name: 'Temporary User',
-  avatar_url: null,
-};
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Provide mock authentication state
-  const [session] = useState<Session | null>(mockSession);
-  const [user] = useState<User | null>(mockUser);
-  const [profile] = useState<any | null>(mockProfile);
-  const [loading] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // Mock authentication functions that do nothing but show toast messages
-  const signIn = async (email: string, password: string) => {
-    toast({
-      title: 'Mock sign in successful',
-      description: 'Authentication is temporarily bypassed',
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        
+        if (newSession?.user) {
+          // Fetch the user profile in a separate call
+          setTimeout(() => {
+            fetchUserProfile(newSession.user.id);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      
+      if (currentSession?.user) {
+        fetchUserProfile(currentSession.user.id);
+      }
+      setLoading(false);
     });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: 'Sign in failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+        throw error;
+      }
+
+      toast({
+        title: 'Sign in successful',
+        description: 'Welcome back!',
+      });
+      
+      navigate('/customer-panel');
+    } catch (error: any) {
+      console.error('Sign in error:', error);
+    }
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    toast({
-      title: 'Mock sign up successful',
-      description: 'Authentication is temporarily bypassed',
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/login`,
+        },
+      });
+
+      if (error) {
+        toast({
+          title: 'Sign up failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+        throw error;
+      }
+
+      toast({
+        title: 'Sign up successful',
+        description: 'Your account has been created!',
+      });
+      
+      navigate('/customer-panel');
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+    }
   };
 
   const signOut = async () => {
-    toast({
-      title: 'Mock sign out',
-      description: 'Authentication is temporarily bypassed',
-    });
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        toast({
+          title: 'Sign out failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+        throw error;
+      }
+      
+      toast({
+        title: 'Signed out',
+        description: 'You have been signed out successfully.',
+      });
+      
+      navigate('/auth/login');
+    } catch (error: any) {
+      console.error('Sign out error:', error);
+    }
   };
 
   const value = {

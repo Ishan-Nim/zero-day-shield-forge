@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,9 +24,16 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Redirect if already logged in
+    if (user) {
+      navigate('/customer-panel');
+    }
+  }, [user, navigate]);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -40,9 +47,6 @@ const Login = () => {
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
-      navigate('/customer-panel');
-    } catch (error) {
-      // Error is handled in the AuthContext
     } finally {
       setIsLoading(false);
     }
@@ -104,11 +108,6 @@ const Login = () => {
             Don't have an account?{" "}
             <Link to="/auth/register" className="font-medium text-cyber-primary hover:underline">
               Sign up
-            </Link>
-          </div>
-          <div>
-            <Link to="/auth/forgot-password" className="font-medium text-gray-600 hover:text-gray-800">
-              Forgot your password?
             </Link>
           </div>
         </CardFooter>
