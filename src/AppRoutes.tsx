@@ -12,6 +12,7 @@ import UpdatePassword from './pages/auth/UpdatePassword';
 
 // Main Pages
 import Index from './pages/Index';
+import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import TermsConditions from './pages/TermsConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -51,6 +52,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
