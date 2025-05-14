@@ -40,7 +40,7 @@ serve(async (req) => {
 
     // Send email to admin
     const adminEmailResponse = await resend.emails.send({
-      from: "Zeroday Contact <onboarding@resend.dev>",
+      from: "contact@zeroday.lk", // Use your verified domain here
       to: ["admin@zeroday.lk"],
       subject: `Contact Form: ${subject || 'New Contact Message'}`,
       html: `
@@ -55,7 +55,7 @@ serve(async (req) => {
 
     // Send confirmation email to user
     const userEmailResponse = await resend.emails.send({
-      from: "Zeroday <onboarding@resend.dev>",
+      from: "contact@zeroday.lk", // Use your verified domain here
       to: [email],
       subject: "Thank you for contacting Zeroday",
       html: `
@@ -70,6 +70,15 @@ serve(async (req) => {
     });
 
     console.log("Emails sent:", { adminEmailResponse, userEmailResponse });
+    
+    // Check for errors in the responses
+    const adminError = adminEmailResponse.error;
+    const userError = userEmailResponse.error;
+    
+    if (adminError || userError) {
+      console.error("Email sending errors:", { adminError, userError });
+      throw new Error(adminError?.message || userError?.message || "Failed to send emails");
+    }
 
     return new Response(
       JSON.stringify({ 
