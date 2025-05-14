@@ -1,22 +1,26 @@
 
 import React from 'react';
 import { Shield, Code, Database, Cpu, Lock, Server, Radio, FileKey } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type ServiceCardProps = {
   icon: React.ReactNode;
   title: string;
   description: string;
+  url: string;
 };
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, url }) => {
   return (
-    <div className="cyber-card p-6 flex flex-col items-start hover:translate-y-[-5px] transition-transform duration-300">
-      <div className="rounded-full bg-cyber-primary/10 p-3 mb-4">
-        {icon}
+    <Link to={url} className="block">
+      <div className="cyber-card p-6 flex flex-col items-start hover:translate-y-[-5px] transition-transform duration-300 h-full">
+        <div className="rounded-full bg-cyber-primary/10 p-3 mb-4">
+          {icon}
+        </div>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400">{description}</p>
       </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-400">{description}</p>
-    </div>
+    </Link>
   );
 };
 
@@ -25,42 +29,50 @@ const Services: React.FC = () => {
     {
       icon: <Shield className="h-6 w-6 text-cyber-primary" />,
       title: "Vulnerability Assessment",
-      description: "Comprehensive scanning and identification of security weaknesses in your systems before they can be exploited."
+      description: "Comprehensive scanning and identification of security weaknesses in your systems before they can be exploited.",
+      url: "/services/vulnerability-assessment"
     },
     {
       icon: <Code className="h-6 w-6 text-cyber-primary" />,
       title: "Plugin Development",
-      description: "Custom-built security plugins designed to harden your systems at the core and integrate seamlessly."
+      description: "Custom-built security plugins designed to harden your systems at the core and integrate seamlessly.",
+      url: "/services/plugin-development"
     },
     {
       icon: <Radio className="h-6 w-6 text-cyber-primary" />,
       title: "Penetration Testing",
-      description: "Real-world attack simulations that uncover and address vulnerabilities before hackers do."
+      description: "Real-world attack simulations that uncover and address vulnerabilities before hackers do.",
+      url: "/services/penetration-testing"
     },
     {
       icon: <Database className="h-6 w-6 text-cyber-primary" />,
       title: "Data Protection",
-      description: "Advanced encryption and security protocols to keep your sensitive information safe from breaches."
+      description: "Advanced encryption and security protocols to keep your sensitive information safe from breaches.",
+      url: "/services/data-protection"
     },
     {
       icon: <Cpu className="h-6 w-6 text-cyber-primary" />,
       title: "DevSecOps Integration",
-      description: "We integrate security directly into your CI/CD pipelines for agile, threat-resistant development."
+      description: "We integrate security directly into your CI/CD pipelines for agile, threat-resistant development.",
+      url: "/services/devsecops-integration"
     },
     {
       icon: <Server className="h-6 w-6 text-cyber-primary" />,
       title: "Security Architecture",
-      description: "Design and implementation of robust security frameworks tailored to your organization's needs."
+      description: "Design and implementation of robust security frameworks tailored to your organization's needs.",
+      url: "/services/security-architecture"
     },
     {
       icon: <Lock className="h-6 w-6 text-cyber-primary" />,
       title: "Compliance Solutions",
-      description: "Navigate complex regulatory requirements with our expert guidance and implementation support."
+      description: "Navigate complex regulatory requirements with our expert guidance and implementation support.",
+      url: "/services/compliance-solutions"
     },
     {
       icon: <FileKey className="h-6 w-6 text-cyber-primary" />,
       title: "Secure Development",
-      description: "Building security into every line of code, from concept to deployment and beyond."
+      description: "Building security into every line of code, from concept to deployment and beyond.",
+      url: "/services/secure-development"
     }
   ];
   
@@ -83,6 +95,7 @@ const Services: React.FC = () => {
               icon={service.icon}
               title={service.title}
               description={service.description}
+              url={service.url}
             />
           ))}
         </div>
