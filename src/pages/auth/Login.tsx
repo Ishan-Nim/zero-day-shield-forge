@@ -28,6 +28,7 @@ const Login = () => {
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     // Redirect if already logged in
@@ -46,16 +47,14 @@ const Login = () => {
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
+    setLoginError(null);
+    
     try {
       await signIn(values.email, values.password);
-      // Navigation is handled in AuthContext
+      // Navigation is handled in AuthContext to ensure it happens after state updates
     } catch (error: any) {
       console.error("Login error:", error);
-      toast({
-        title: "Login failed",
-        description: error.message || "Please check your credentials and try again.",
-        variant: "destructive",
-      });
+      setLoginError(error.message || "Please check your credentials and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -74,6 +73,11 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {loginError && (
+            <div className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              {loginError}
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -83,7 +87,7 @@ const Login = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="you@example.com" autoComplete="email" {...field} />
+                      <Input placeholder="you@example.com" autoComplete="email" disabled={isLoading} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -96,7 +100,7 @@ const Login = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" autoComplete="current-password" {...field} />
+                      <Input type="password" autoComplete="current-password" disabled={isLoading} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

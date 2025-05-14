@@ -41,7 +41,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // Auto-redirect to customer panel when user logs in
           if (_event === 'SIGNED_IN') {
-            navigate('/customer-panel');
+            toast({
+              title: "Sign in successful",
+              description: "Welcome to your customer panel!",
+              duration: 3000,
+            });
+            setTimeout(() => {
+              navigate('/customer-panel');
+            }, 100);
           }
         } else {
           setProfile(null);
@@ -106,8 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
-        // Even if there's an error, check if it's related to email confirmation
-        // and try to proceed anyway for testing environments
+        // Handle email confirmation error specially
         if (error.message.includes('Email not confirmed')) {
           console.log("Email not confirmed, but proceeding for testing");
           toast({
@@ -123,6 +129,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           
           if (forceData.session) {
+            toast({
+              title: "Sign in successful",
+              description: "Welcome back!",
+              duration: 3000,
+            });
             navigate('/customer-panel');
             return;
           } else {
@@ -148,9 +159,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           duration: 3000,
         });
         
-        navigate('/customer-panel');
+        // Explicitly navigate to customer panel with a slight delay to ensure state updates
+        setTimeout(() => {
+          navigate('/customer-panel');
+        }, 100);
       } else {
         console.log("No session returned after sign in");
+        toast({
+          title: "Sign in issue",
+          description: "Authentication succeeded but no session was created.",
+          variant: "destructive",
+        });
       }
     } catch (error: any) {
       console.error('Sign in error:', error);
