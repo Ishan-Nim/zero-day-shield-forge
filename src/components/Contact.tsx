@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 // Define form validation schema
@@ -47,7 +47,8 @@ const Contact: React.FC = () => {
       }
 
       // Show success message
-      toast.success("Message sent successfully!", {
+      toast({
+        title: "Message sent successfully!",
         description: "We'll get back to you as soon as possible.",
       });
       
@@ -56,8 +57,10 @@ const Contact: React.FC = () => {
       
     } catch (error) {
       console.error("Error sending contact form:", error);
-      toast.error("Failed to send message", {
+      toast({
+        title: "Failed to send message",
         description: "Please try again later or contact us directly.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);

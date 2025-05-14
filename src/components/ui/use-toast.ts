@@ -1,5 +1,5 @@
 
-import { useToast as useHookToast, toast } from "@/hooks/use-toast";
+// This file acts as a proxy for the toast hook to maintain backward compatibility
+import { useToast, toast } from "@/hooks/use-toast";
 
-export const useToast = useHookToast;
-export { toast };
+export { useToast, toast };
