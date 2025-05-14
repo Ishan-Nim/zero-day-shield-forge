@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
+import { Routes, Route } from 'react-router-dom';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -45,24 +44,7 @@ import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
 import CustomerPanelSettings from './pages/CustomerPanelSettings';
 import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/auth/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
 const AppRoutes = () => {
-  const { user } = useAuth();
-
   return (
     <Routes>
       <Route path="/" element={<Index />} />
@@ -70,48 +52,18 @@ const AppRoutes = () => {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
       
-      {/* Auth Routes */}
-      <Route 
-        path="/auth/login" 
-        element={user ? <Navigate to="/customer-panel" replace /> : <Login />} 
-      />
-      <Route 
-        path="/auth/register" 
-        element={user ? <Navigate to="/customer-panel" replace /> : <Register />} 
-      />
+      {/* Auth Routes - kept for future use */}
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
       <Route path="/auth/verification" element={<Verification />} />
       
-      {/* Protected Customer Panel Routes */}
-      <Route path="/customer-panel" element={
-        <ProtectedRoute>
-          <CustomerPanel />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/subscriptions" element={
-        <ProtectedRoute>
-          <CustomerPanelSubscriptions />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/products" element={
-        <ProtectedRoute>
-          <CustomerPanelProducts />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/invoices" element={
-        <ProtectedRoute>
-          <CustomerPanelInvoices />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/settings" element={
-        <ProtectedRoute>
-          <CustomerPanelSettings />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/notifications" element={
-        <ProtectedRoute>
-          <CustomerPanelNotifications />
-        </ProtectedRoute>
-      } />
+      {/* Customer Panel Routes - No longer protected */}
+      <Route path="/customer-panel" element={<CustomerPanel />} />
+      <Route path="/customer-panel/subscriptions" element={<CustomerPanelSubscriptions />} />
+      <Route path="/customer-panel/products" element={<CustomerPanelProducts />} />
+      <Route path="/customer-panel/invoices" element={<CustomerPanelInvoices />} />
+      <Route path="/customer-panel/settings" element={<CustomerPanelSettings />} />
+      <Route path="/customer-panel/notifications" element={<CustomerPanelNotifications />} />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />

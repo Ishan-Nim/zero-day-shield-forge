@@ -43,7 +43,7 @@ const Header: React.FC = () => {
             <a href="#how-we-work" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">Process</a>
             <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">About</a>
             <a href="#faq" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">FAQ</a>
-            <Link to="/customer-panel" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors">My Account</Link>
+            <Link to="/customer-panel" className="text-cyber-primary font-medium hover:text-cyber-accent transition-colors">Customer Panel</Link>
           </nav>
           
           <div className="hidden md:block">
@@ -70,7 +70,7 @@ const Header: React.FC = () => {
             <a href="#how-we-work" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>Process</a>
             <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>About</a>
             <a href="#faq" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>FAQ</a>
-            <Link to="/customer-panel" className="text-gray-700 dark:text-gray-300 hover:text-cyber-primary dark:hover:text-cyber-secondary transition-colors p-2" onClick={toggleMobileMenu}>My Account</Link>
+            <Link to="/customer-panel" className="text-cyber-primary font-medium hover:text-cyber-accent transition-colors p-2" onClick={toggleMobileMenu}>Customer Panel</Link>
             <Link to="/contact" onClick={toggleMobileMenu}>
               <Button className="bg-cyber-primary hover:bg-cyber-accent text-white w-full">
                 Contact Us
