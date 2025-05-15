@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Download, ArrowLeft, ShieldAlert } from 'lucide-react';
 import CustomerDeliveries from '@/components/CustomerDeliveries';
 import { jsPDF } from 'jspdf';
+// @ts-ignore - We need this for the autotable plugin
 import 'jspdf-autotable';
 
 const InvoiceViewer: React.FC = () => {
@@ -73,7 +74,7 @@ const InvoiceViewer: React.FC = () => {
     };
 
     fetchOrder();
-  }, [id, user, navigate]);
+  }, [id, user, navigate, toast]);
 
   const generateInvoicePDF = async () => {
     if (!order) return;
@@ -83,7 +84,7 @@ const InvoiceViewer: React.FC = () => {
 
       // Create new PDF document
       const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
+      const pageWidth = doc.internal.pageSize.getWidth();
 
       // Add company logo/header
       doc.setFontSize(20);
@@ -114,7 +115,7 @@ const InvoiceViewer: React.FC = () => {
       
       // Items table
       const tableColumn = ["Product", "Quantity", "Unit Price", "Total"];
-      const tableRows: any[][] = [];
+      const tableRows: any[] = [];
       
       order.order_items.forEach((item: any) => {
         const itemData = [
@@ -136,8 +137,8 @@ const InvoiceViewer: React.FC = () => {
         margin: { left: 20, right: 20 },
       });
       
-      // Total
-      // @ts-ignore - Get the Y position after the table
+      // Get the Y position after the table
+      // @ts-ignore
       const finalY = (doc as any).lastAutoTable.finalY || 120;
       doc.setFontSize(12);
       doc.text(`Total Amount: $${order.total.toFixed(2)}`, pageWidth - 60, finalY + 20);
