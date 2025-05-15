@@ -48,10 +48,13 @@ import CustomerPanelProducts from './pages/CustomerPanelProducts';
 import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
 import CustomerPanelSettings from './pages/CustomerPanelSettings';
 import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
+import InvoiceViewer from './pages/InvoiceViewer';
 
 // Admin Panel Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductsManagement from './pages/admin/ProductsManagement';
+import KeysManagement from './pages/admin/KeysManagement';
+import DeliveriesManagement from './pages/admin/DeliveriesManagement';
 
 const AppRoutes = () => {
   return (
@@ -91,6 +94,11 @@ const AppRoutes = () => {
           <CustomerPanelInvoices />
         </ProtectedRoute>
       } />
+      <Route path="/customer-panel/invoices/:id" element={
+        <ProtectedRoute>
+          <InvoiceViewer />
+        </ProtectedRoute>
+      } />
       <Route path="/customer-panel/settings" element={
         <ProtectedRoute>
           <CustomerPanelSettings />
@@ -111,6 +119,16 @@ const AppRoutes = () => {
       <Route path="/admin/products" element={
         <ProtectedRoute>
           <ProductsManagement />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/keys" element={
+        <ProtectedRoute>
+          <KeysManagement />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/deliveries" element={
+        <ProtectedRoute>
+          <DeliveriesManagement />
         </ProtectedRoute>
       } />
       

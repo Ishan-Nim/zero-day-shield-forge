@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action_type: string
@@ -38,6 +56,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      order_deliveries: {
+        Row: {
+          content: string
+          delivery_type: string
+          id: string
+          notes: string | null
+          order_id: string
+          sent_at: string
+          sent_by: string
+        }
+        Insert: {
+          content: string
+          delivery_type: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          sent_at?: string
+          sent_by: string
+        }
+        Update: {
+          content?: string
+          delivery_type?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          sent_at?: string
+          sent_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_deliveries_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_items: {
         Row: {
@@ -82,6 +138,9 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_delivered: boolean | null
+          payment_method: string | null
+          payment_status: string | null
           status: string | null
           total: number
           user_id: string
@@ -89,6 +148,9 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_delivered?: boolean | null
+          payment_method?: string | null
+          payment_status?: string | null
           status?: string | null
           total: number
           user_id: string
@@ -96,42 +158,86 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_delivered?: boolean | null
+          payment_method?: string | null
+          payment_status?: string | null
           status?: string | null
           total?: number
           user_id?: string
         }
         Relationships: []
       }
+      product_keys: {
+        Row: {
+          created_at: string
+          id: string
+          is_used: boolean | null
+          key_value: string
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          key_value: string
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          key_value?: string
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_keys_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           active: boolean | null
           created_at: string
           description: string | null
+          features: string[] | null
           id: string
           image_url: string | null
           is_subscription: boolean | null
           name: string
           price: number
+          product_type: string | null
         }
         Insert: {
           active?: boolean | null
           created_at?: string
           description?: string | null
+          features?: string[] | null
           id?: string
           image_url?: string | null
           is_subscription?: boolean | null
           name: string
           price: number
+          product_type?: string | null
         }
         Update: {
           active?: boolean | null
           created_at?: string
           description?: string | null
+          features?: string[] | null
           id?: string
           image_url?: string | null
           is_subscription?: boolean | null
           name?: string
           price?: number
+          product_type?: string | null
         }
         Relationships: []
       }

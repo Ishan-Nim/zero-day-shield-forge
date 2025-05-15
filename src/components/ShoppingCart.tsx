@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   ShoppingCart,
@@ -6,7 +5,8 @@ import {
   Trash2,
   PaypalIcon,
   CreditCard,
-  Banknote
+  Banknote,
+  Package
 } from 'lucide-react';
 import {
   Sheet,

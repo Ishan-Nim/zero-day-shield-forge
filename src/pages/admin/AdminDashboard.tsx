@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -13,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AdminPanelLayout from '@/components/AdminPanelLayout';
+import { checkAdminStatus } from '@/utils/adminUtils';
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -29,35 +29,23 @@ const AdminDashboard: React.FC = () => {
 
   // Check if user is admin
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const verifyAdminStatus = async () => {
       if (!user) return;
       
-      try {
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (error) throw error;
-        
-        setIsAdmin(data ? true : false);
-        
-        if (!data) {
-          toast({
-            title: "Access Denied",
-            description: "You don't have admin privileges.",
-            variant: "destructive"
-          });
-          navigate('/');
-        }
-      } catch (error: any) {
-        console.error("Error checking admin status:", error);
-        setIsAdmin(false);
+      const isUserAdmin = await checkAdminStatus(user.id);
+      setIsAdmin(isUserAdmin);
+      
+      if (!isUserAdmin) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges.",
+          variant: "destructive"
+        });
+        navigate('/');
       }
     };
     
-    checkAdminStatus();
+    verifyAdminStatus();
   }, [user, navigate]);
   
   // Fetch dashboard stats
