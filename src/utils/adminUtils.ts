@@ -9,7 +9,10 @@ export const checkAdminStatus = async (userId: string | undefined): Promise<bool
     // Call the is_admin RPC function with proper type handling
     const { data, error } = await supabase.rpc('is_admin', {
       user_id: userId 
-    } as any); // Use type assertion to bypass TypeScript error
+    }, {
+      // Explicitly setting the return type
+      count: 'exact'
+    });
     
     if (error) {
       console.error("Error checking admin status via RPC:", error);
@@ -42,7 +45,7 @@ export const createAdminUser = async (userEmail: string): Promise<{success: bool
       .from('profiles')
       .select('id')
       .eq('email', userEmail)
-      .maybeSingle(); // Use maybeSingle to avoid type instantiation errors
+      .single(); 
     
     if (userError || !userData) {
       return { 
