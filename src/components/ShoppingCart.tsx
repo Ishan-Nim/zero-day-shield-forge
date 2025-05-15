@@ -3,7 +3,6 @@ import {
   ShoppingCart,
   X,
   Trash2,
-  PaypalIcon,
   CreditCard,
   Banknote,
   Package

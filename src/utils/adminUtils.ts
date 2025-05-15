@@ -6,7 +6,10 @@ export const checkAdminStatus = async (userId: string | undefined): Promise<bool
   if (!userId) return false;
   
   try {
-    const { data, error } = await supabase.rpc('is_admin', { user_id: userId });
+    // Call the is_admin RPC function with the correct type
+    const { data, error } = await supabase.rpc('is_admin', { 
+      user_id: userId 
+    });
     
     if (error) {
       console.error("Error checking admin status via RPC:", error);
@@ -39,7 +42,7 @@ export const createAdminUser = async (userEmail: string): Promise<{success: bool
       .from('profiles')
       .select('id')
       .eq('email', userEmail)
-      .maybeSingle();
+      .single();
     
     if (userError || !userData) {
       return { 
