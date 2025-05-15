@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import TermsConditions from './pages/TermsConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
+import Store from './pages/Store';
 
 // Company Pages
 import DiscoveryScopeDefinition from './pages/company/DiscoveryScopeDefinition';
@@ -48,6 +49,10 @@ import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
 import CustomerPanelSettings from './pages/CustomerPanelSettings';
 import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
 
+// Admin Panel Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ProductsManagement from './pages/admin/ProductsManagement';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -56,6 +61,7 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
+      <Route path="/store" element={<Store />} />
       
       {/* Auth Routes */}
       <Route path="/auth/login" element={<Login />} />
@@ -93,6 +99,18 @@ const AppRoutes = () => {
       <Route path="/customer-panel/notifications" element={
         <ProtectedRoute>
           <CustomerPanelNotifications />
+        </ProtectedRoute>
+      } />
+      
+      {/* Admin Panel Routes */}
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <AdminDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/products" element={
+        <ProtectedRoute>
+          <ProductsManagement />
         </ProtectedRoute>
       } />
       

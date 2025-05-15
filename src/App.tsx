@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import AppRoutes from "./AppRoutes";
 import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "@/components/ShoppingCart";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -22,7 +23,9 @@ const App = () => {
             <Sonner />
             <BrowserRouter>
               <AuthProvider>
-                <AppRoutes />
+                <CartProvider>
+                  <AppRoutes />
+                </CartProvider>
               </AuthProvider>
             </BrowserRouter>
           </HelmetProvider>
