@@ -7,9 +7,9 @@ export const checkAdminStatus = async (userId: string | undefined): Promise<bool
   
   try {
     // Call the is_admin RPC function with proper type handling
-    const { data, error } = await supabase.rpc(
+    const { data, error } = await supabase.rpc<boolean>(
       'is_admin', 
-      { user_id: userId } as { user_id: string }, // Explicitly type the parameters
+      { user_id: userId }, 
       { count: 'exact' }
     );
     
