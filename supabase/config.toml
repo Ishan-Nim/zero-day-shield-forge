@@ -1,16 +1,51 @@
 
 project_id = "pqalojdhgapnjnzulvas"
 
-[auth]
-# Enable email confirmations for proper verification
-enable_email_confirmations = true
-site_url = "https://zeroday.lk"
-additional_redirect_urls = [
-  "https://zeroday.lk", 
-  "https://zeroday.lk/auth/verification",
-  "https://zeroday.lk/auth/update-password",
-  "https://zeroday.lk/customer-panel"
-]
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
 
-[functions.send-contact-email]
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://localhost"
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+
+[auth.email]
+enabled = true
+double_confirm_changes = true
+double_confirm_delete = true
+
+[auth.external.github]
+enabled = false
+client_id = ""
+secret = ""
+redirect_uri = ""
+
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = ""
+redirect_uri = ""
+
+[functions]
+[functions.generate-payhere-hash]
+verify_jwt = true
+[functions.payhere-notification]
 verify_jwt = false

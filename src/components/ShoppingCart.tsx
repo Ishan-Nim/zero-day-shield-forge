@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { processPayHerePayment } from '@/utils/paymentGateways';
 
 // Define cart item type
 interface CartItem {
@@ -236,7 +237,9 @@ const CartContent: React.FC = () => {
         .insert({
           user_id: user!.id,
           total: totalPrice,
-          status: 'pending'
+          status: 'pending',
+          payment_status: 'pending',
+          payment_method: paymentMethod
         })
         .select()
         .single();
@@ -257,17 +260,32 @@ const CartContent: React.FC = () => {
       
       if (itemsError) throw itemsError;
       
-      // Order successful
-      toast({
-        title: "Order placed successfully!",
-        description: `Your order has been placed. Order #${order.id.substring(0, 8)}`,
-        duration: 5000,
-      });
-      
-      // Clear cart and close the drawer
-      clearCart();
-      setIsOpen(false);
-      
+      // Process payment based on selected method
+      if (paymentMethod === 'card') {
+        // For PayHere credit card payment
+        await processPayHerePayment(order, user, (orderId) => {
+          // Payment successful callback
+          toast({
+            title: "Payment successful!",
+            description: `Your payment has been processed successfully. Order #${orderId.substring(0, 8)}`,
+            duration: 5000,
+          });
+          
+          clearCart();
+          setIsOpen(false);
+        });
+      } else {
+        // For other payment methods (PayPal, Bank Transfer)
+        toast({
+          title: "Order placed successfully!",
+          description: `Your order has been placed. Order #${order.id.substring(0, 8)}`,
+          duration: 5000,
+        });
+        
+        // Clear cart and close the drawer
+        clearCart();
+        setIsOpen(false);
+      }
     } catch (error: any) {
       console.error("Error processing order:", error);
       toast({
@@ -409,7 +427,7 @@ const CartContent: React.FC = () => {
             <h3 className="font-medium mb-4">Select payment method</h3>
             
             <div className="space-y-3 mb-6">
-              {/* PayPal */}
+              {/* PayPal - You can replace this with another payment method if needed */}
               <div
                 className={`border rounded-lg p-4 flex items-center cursor-pointer transition-colors ${
                   paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : ''
@@ -429,7 +447,7 @@ const CartContent: React.FC = () => {
                 )}
               </div>
               
-              {/* Credit Card */}
+              {/* Credit Card with PayHere */}
               <div
                 className={`border rounded-lg p-4 flex items-center cursor-pointer transition-colors ${
                   paymentMethod === 'card' ? 'border-primary bg-primary/5' : ''
@@ -439,7 +457,10 @@ const CartContent: React.FC = () => {
                 <div className="h-10 w-10 flex items-center justify-center bg-green-100 text-green-600 rounded-full mr-3">
                   <CreditCard className="h-5 w-5" />
                 </div>
-                <span className="font-medium">Credit Card</span>
+                <div className="flex-1">
+                  <span className="font-medium">Credit/Debit Card</span>
+                  <p className="text-xs text-muted-foreground mt-1">Secured by PayHere</p>
+                </div>
                 {paymentMethod === 'card' && (
                   <svg className="h-5 w-5 ml-auto text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

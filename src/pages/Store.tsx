@@ -89,6 +89,24 @@ const Store: React.FC = () => {
               </p>
             </div>
             
+            {/* Payment Method Banner */}
+            <div className="mb-10 bg-gradient-to-r from-cyber-primary/10 to-cyber-primary/5 rounded-lg p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <span className="font-medium">Secure Payment Methods:</span>
+                <div className="flex items-center gap-3">
+                  <img src="https://www.payhere.lk/downloads/images/payhere_square_banner.png" 
+                       alt="PayHere" 
+                       className="h-8 object-contain" />
+                  <img src="https://cdn.visa.com/v2/assets/images/logos/visa/blue/logo.png" 
+                       alt="Visa" 
+                       className="h-5 object-contain" />
+                  <img src="https://www.mastercard.us/content/dam/public/mastercardcom/na/us/en/homepage/Home/mc-logo-52.svg" 
+                       alt="Mastercard" 
+                       className="h-8 object-contain" />
+                </div>
+              </div>
+            </div>
+            
             <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-8">
               <div className="flex justify-center">
                 <TabsList>
