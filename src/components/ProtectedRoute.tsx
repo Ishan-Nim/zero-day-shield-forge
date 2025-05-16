@@ -6,7 +6,7 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  // In a static site, we just pass through the children without authentication
+  // For a static corporate site, we just pass through the children without authentication
   return <>{children}</>;
 };
 

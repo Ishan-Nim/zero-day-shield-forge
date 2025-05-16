@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import AppRoutes from "./AppRoutes";
-import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "@/components/ShoppingCart";
 
 // Create a client
@@ -22,11 +21,9 @@ const App = () => {
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <AuthProvider>
-                <CartProvider>
-                  <AppRoutes />
-                </CartProvider>
-              </AuthProvider>
+              <CartProvider>
+                <AppRoutes />
+              </CartProvider>
             </BrowserRouter>
           </HelmetProvider>
         </TooltipProvider>
