@@ -1,53 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, ShoppingCart as CartIcon, UserCircle2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import CartButton from '@/components/ShoppingCart';
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 import { useIsMobile } from '@/hooks/use-mobile';
-import { supabase } from '@/integrations/supabase/client';
 
 const Header = () => {
   const location = useLocation();
-  const { user, profile, signOut } = useAuth();
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  
-  // Check for admin status
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!user) {
-        setIsAdmin(false);
-        return;
-      }
-      
-      try {
-        const { data } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-        
-        setIsAdmin(data ? true : false);
-      } catch (error) {
-        console.error("Error checking admin status:", error);
-        setIsAdmin(false);
-      }
-    };
-    
-    checkAdminStatus();
-  }, [user]);
   
   // Listen for scroll events
   useEffect(() => {
@@ -68,7 +40,7 @@ const Header = () => {
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+        isScrolled ? 'bg-white shadow-md py-3' : 'bg-white/80 backdrop-blur-md py-5'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -80,130 +52,83 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {/* Services Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center">
-                  Services <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Our Services</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/services/web-app-scanner">Web App Scanner</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services/vulnerability-assessment">Vulnerability Assessment</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services/penetration-testing">Penetration Testing</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services/plugin-development">Plugin Development</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services/data-protection">Data Protection</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services/devsecops-integration">DevSecOps Integration</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="hidden md:flex items-center justify-between flex-1 max-w-3xl ml-10">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                      {[
+                        { title: "Web App Scanner", href: "/services/web-app-scanner", description: "Automated scanning of web applications" },
+                        { title: "Vulnerability Assessment", href: "/services/vulnerability-assessment", description: "Identify security vulnerabilities" },
+                        { title: "Penetration Testing", href: "/services/penetration-testing", description: "Simulate cyber attacks to test security" },
+                        { title: "Plugin Development", href: "/services/plugin-development", description: "Custom security plugin solutions" }
+                      ].map((service) => (
+                        <li key={service.href}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              to={service.href}
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">{service.title}</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {service.description}
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] md:grid-cols-2">
+                      {[
+                        { title: "Local Roots", href: "/company/local-roots", description: "Our story and local presence" },
+                        { title: "Security-First Philosophy", href: "/company/security-first", description: "Our approach to security" },
+                        { title: "Our Process", href: "/company/discovery-scope", description: "How we work with clients" },
+                        { title: "Client Support", href: "/company/client-support", description: "How we support our clients" }
+                      ].map((item) => (
+                        <li key={item.href}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              to={item.href}
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">{item.title}</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {item.description}
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/contact" className={cn(navigationMenuTriggerStyle())}>
+                    About
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
-            {/* Company Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center">
-                  Company <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>About Us</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/company/local-roots">Local Roots</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/company/security-first">Security-First Philosophy</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/company/client-support">Client-First Support</Link>
-                </DropdownMenuItem>
-                <DropdownMenuLabel className="mt-2">Our Process</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/company/discovery-scope">Discovery & Scope</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/company/custom-quotation">Custom Quotation</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/company/formal-agreement">Formal Agreement</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/company/secure-delivery">Secure Delivery</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Regular Links */}
-            <Link to="/store">
-              <Button variant="ghost">Store</Button>
-            </Link>
+          {/* Contact Us Button */}
+          <div className="hidden md:block">
             <Link to="/contact">
-              <Button variant="ghost">Contact</Button>
+              <Button className="bg-cyber-primary hover:bg-cyber-accent transition-colors">
+                Contact Us
+              </Button>
             </Link>
-          </nav>
-
-          {/* Right Side Actions */}
-          <div className="hidden md:flex items-center space-x-2">
-            <CartButton />
-            
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <UserCircle2 className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    {profile?.full_name || user.email}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {isAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin">Admin Panel</Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link to="/customer-panel">My Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/customer-panel/products">My Products</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/customer-panel/settings">Settings</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()}>
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link to="/auth/login">
-                <Button>Sign In</Button>
-              </Link>
-            )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-2">
-            <CartButton />
-
+          <div className="flex md:hidden items-center">
             <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -272,62 +197,19 @@ const Header = () => {
 
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <Link 
-                  to="/store"
-                  className="text-gray-800 hover:text-cyber-primary font-medium"
-                >
-                  Store
-                </Link>
-                <Link 
                   to="/contact"
                   className="text-gray-800 hover:text-cyber-primary font-medium"
                 >
-                  Contact
+                  About
                 </Link>
               </div>
 
               <div className="mt-6 pt-6 border-t">
-                {user ? (
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium">Signed in as {profile?.full_name || user.email}</p>
-                    <div className="grid grid-cols-1 gap-3">
-                      {isAdmin && (
-                        <Link
-                          to="/admin"
-                          className="text-gray-800 hover:text-cyber-primary"
-                        >
-                          Admin Panel
-                        </Link>
-                      )}
-                      <Link
-                        to="/customer-panel"
-                        className="text-gray-800 hover:text-cyber-primary"
-                      >
-                        My Dashboard
-                      </Link>
-                      <Link
-                        to="/customer-panel/products"
-                        className="text-gray-800 hover:text-cyber-primary"
-                      >
-                        My Products
-                      </Link>
-                      <button
-                        onClick={() => signOut()}
-                        className="text-left text-gray-800 hover:text-cyber-primary"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col space-y-3">
-                    <Link to="/auth/login">
-                      <Button className="w-full">Sign In</Button>
-                    </Link>
-                    <Link to="/auth/register">
-                      <Button variant="outline" className="w-full">Register</Button>
-                    </Link>
-                  </div>
-                )}
+                <Link to="/contact">
+                  <Button className="w-full bg-cyber-primary hover:bg-cyber-accent">
+                    Contact Us
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
