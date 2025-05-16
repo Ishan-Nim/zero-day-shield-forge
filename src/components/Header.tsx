@@ -54,11 +54,11 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-between flex-1 max-w-3xl ml-10">
-            <NavigationMenu>
-              <NavigationMenuList>
+          <div className="hidden md:flex items-center justify-end flex-1 max-w-3xl ml-10">
+            <NavigationMenu className="mx-auto md:mx-0 md:ml-auto">
+              <NavigationMenuList className="space-x-3">
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-gray-100">Services</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       {[
@@ -85,7 +85,7 @@ const Header = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-gray-100">Company</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] md:grid-cols-2">
                       {[
@@ -112,7 +112,7 @@ const Header = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link to="/contact" className={cn(navigationMenuTriggerStyle())}>
+                  <Link to="/contact" className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-gray-100")}>
                     About
                   </Link>
                 </NavigationMenuItem>
@@ -121,7 +121,7 @@ const Header = () => {
           </div>
 
           {/* Contact Us Button */}
-          <div className="hidden md:block">
+          <div className="hidden md:block ml-6">
             <Link to="/contact">
               <Button className="bg-cyber-primary hover:bg-cyber-accent transition-colors">
                 Contact Us
