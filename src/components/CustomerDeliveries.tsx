@@ -1,42 +1,24 @@
 
 import React from 'react';
-import { FileText } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle } from 'lucide-react';
 
-interface DeliveryProps {
-  orderId: string;
-}
-
-const CustomerDeliveries: React.FC<DeliveryProps> = ({ orderId }) => {
+const CustomerDeliveries = () => {
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <FileText className="h-6 w-6 text-green-500" />
-            <CardTitle className="text-lg">Sample File</CardTitle>
-          </div>
-          <CardDescription>
-            Example static content
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-muted p-3 rounded-md font-mono text-sm">
-            Sample static content for demonstration purposes
-          </div>
-        </CardContent>
-        <CardFooter className="border-t pt-4 text-sm text-muted-foreground">
-          <p>This is a static example with no database connection.</p>
-        </CardFooter>
-      </Card>
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Deliveries</CardTitle>
+        <CardDescription>Your recent deliveries</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col items-center justify-center py-8">
+          <AlertCircle className="h-10 w-10 text-muted-foreground mb-3" />
+          <p className="text-center text-muted-foreground">
+            This is a static site. Delivery information is not available.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

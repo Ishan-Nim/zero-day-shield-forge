@@ -1,14 +1,6 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from './components/ProtectedRoute';
-
-// Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import Verification from './pages/auth/Verification';
-import ResetPassword from './pages/auth/ResetPassword';
-import UpdatePassword from './pages/auth/UpdatePassword';
 
 // Main Pages
 import Index from './pages/Index';
@@ -17,7 +9,6 @@ import NotFound from './pages/NotFound';
 import TermsConditions from './pages/TermsConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
-import Store from './pages/Store';
 
 // Company Pages
 import DiscoveryScopeDefinition from './pages/company/DiscoveryScopeDefinition';
@@ -41,21 +32,6 @@ import ComplianceSolutions from './pages/services/ComplianceSolutions';
 import SecureDevelopment from './pages/services/SecureDevelopment';
 import WebAppVulnerabilityScanner from './pages/services/WebAppVulnerabilityScanner';
 
-// Customer Panel Pages
-import CustomerPanel from './pages/CustomerPanel';
-import CustomerPanelSubscriptions from './pages/CustomerPanelSubscriptions';
-import CustomerPanelProducts from './pages/CustomerPanelProducts';
-import CustomerPanelInvoices from './pages/CustomerPanelInvoices';
-import CustomerPanelSettings from './pages/CustomerPanelSettings';
-import CustomerPanelNotifications from './pages/CustomerPanelNotifications';
-import InvoiceViewer from './pages/InvoiceViewer';
-
-// Admin Panel Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ProductsManagement from './pages/admin/ProductsManagement';
-import KeysManagement from './pages/admin/KeysManagement';
-import DeliveriesManagement from './pages/admin/DeliveriesManagement';
-
 const AppRoutes = () => {
   return (
     <Routes>
@@ -64,73 +40,6 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund" element={<RefundPolicy />} />
-      <Route path="/store" element={<Store />} />
-      
-      {/* Auth Routes */}
-      <Route path="/auth/login" element={<Login />} />
-      <Route path="/auth/register" element={<Register />} />
-      <Route path="/auth/verification" element={<Verification />} />
-      <Route path="/auth/reset-password" element={<ResetPassword />} />
-      <Route path="/auth/update-password" element={<UpdatePassword />} />
-      
-      {/* Customer Panel Routes - Protected with authentication */}
-      <Route path="/customer-panel" element={
-        <ProtectedRoute>
-          <CustomerPanel />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/subscriptions" element={
-        <ProtectedRoute>
-          <CustomerPanelSubscriptions />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/products" element={
-        <ProtectedRoute>
-          <CustomerPanelProducts />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/invoices" element={
-        <ProtectedRoute>
-          <CustomerPanelInvoices />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/invoices/:id" element={
-        <ProtectedRoute>
-          <InvoiceViewer />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/settings" element={
-        <ProtectedRoute>
-          <CustomerPanelSettings />
-        </ProtectedRoute>
-      } />
-      <Route path="/customer-panel/notifications" element={
-        <ProtectedRoute>
-          <CustomerPanelNotifications />
-        </ProtectedRoute>
-      } />
-      
-      {/* Admin Panel Routes */}
-      <Route path="/admin" element={
-        <ProtectedRoute>
-          <AdminDashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/products" element={
-        <ProtectedRoute>
-          <ProductsManagement />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/keys" element={
-        <ProtectedRoute>
-          <KeysManagement />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/deliveries" element={
-        <ProtectedRoute>
-          <DeliveriesManagement />
-        </ProtectedRoute>
-      } />
       
       {/* Company Pages */}
       <Route path="/company/discovery-scope" element={<DiscoveryScopeDefinition />} />
