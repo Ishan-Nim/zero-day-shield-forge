@@ -1,6 +1,6 @@
 
 // Static admin utility functions (no database connection)
-export const checkAdminStatus = async (): Promise<boolean> => {
+export const checkAdminStatus = async (userId?: string): Promise<boolean> => {
   // In a static site, we'll just return false since there's no admin authentication
   return false;
 };

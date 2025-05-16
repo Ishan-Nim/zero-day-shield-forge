@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -69,7 +68,7 @@ const DeliveriesManagement: React.FC = () => {
     const verifyAdminStatus = async () => {
       if (!user) return;
       
-      const isUserAdmin = await checkAdminStatus(user.id);
+      const isUserAdmin = await checkAdminStatus();
       setIsAdmin(isUserAdmin);
       
       if (!isUserAdmin) {
